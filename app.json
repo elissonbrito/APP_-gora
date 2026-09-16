@@ -33,7 +33,13 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O ÁGORA usa sua localização para preencher automaticamente o endereço da ocorrência que você está registrando."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

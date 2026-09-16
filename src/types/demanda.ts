@@ -23,8 +23,15 @@ export type DemandaResumo = {
   atualizadaEm: string;
 };
 
+export type DemandaLocalizacao = {
+  endereco: string;
+  latitude?: number;
+  longitude?: number;
+};
+
 export type NovaDemandaPayload = {
   categoria: DemandaCategoria;
   assunto: string;
   descricao: string;
+  localizacao: DemandaLocalizacao;
 };

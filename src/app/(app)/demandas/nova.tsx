@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CategoriaSelect } from '@/components/forms/categoria-select';
+import { LocationField } from '@/components/forms/location-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,12 @@ export default function NovaDemandaScreen() {
     formState: { errors },
   } = useForm<NovaDemandaFormValues>({
     resolver: zodResolver(novaDemandaSchema),
-    defaultValues: { categoria: undefined, assunto: '', descricao: '' },
+    defaultValues: {
+      categoria: undefined,
+      assunto: '',
+      descricao: '',
+      localizacao: { endereco: '' },
+    },
   });
   const criarDemanda = useCriarDemanda();
 
@@ -63,7 +69,7 @@ export default function NovaDemandaScreen() {
       <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <ThemedText type="default" themeColor="textSecondary">
-            Conte o que está acontecendo. A localização será adicionada em um próximo passo.
+            Conte o que está acontecendo e onde.
           </ThemedText>
 
           <Controller
@@ -107,6 +113,18 @@ export default function NovaDemandaScreen() {
                 value={field.value}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="localizacao"
+            render={({ field }) => (
+              <LocationField
+                value={field.value}
+                onChange={field.onChange}
+                errorMessage={errors.localizacao?.endereco?.message}
               />
             )}
           />

@@ -7,6 +7,11 @@ export const novaDemandaSchema = z.object({
   ),
   assunto: z.string().min(5, 'Informe um assunto com pelo menos 5 caracteres.'),
   descricao: z.string().min(20, 'Descreva a ocorrência com pelo menos 20 caracteres.'),
+  localizacao: z.object({
+    endereco: z.string().min(5, 'Informe o endereço da ocorrência.'),
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
+  }),
 });
 
 export type NovaDemandaFormValues = z.infer<typeof novaDemandaSchema>;
