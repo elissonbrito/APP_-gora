@@ -1,6 +1,6 @@
 // MOCK CONTRACT — ver services/api/mock/auth.mock.ts. Dados fictícios até que
 // a API real do ÁGORA esteja disponível para este projeto.
-import type { DemandaResumo } from '@/types/demanda';
+import type { DemandaResumo, NovaDemandaPayload } from '@/types/demanda';
 
 import { mockDelay } from './network';
 
@@ -39,4 +39,33 @@ const mockDemandasPorUsuario: Record<string, DemandaResumo[]> = {
 export async function mockListarMinhasDemandas(userId: string): Promise<DemandaResumo[]> {
   const demandas = mockDemandasPorUsuario[userId] ?? [];
   return mockDelay(demandas);
+}
+
+function gerarProtocolo(): string {
+  const ano = new Date().getFullYear();
+  const sequencial = Math.floor(Math.random() * 999_999) + 1;
+  return `AG-${ano}-${String(sequencial).padStart(6, '0')}`;
+}
+
+/**
+ * DemandaResumo ainda não guarda `descricao` — isso entra junto com o tipo
+ * de detalhe completo (checkpoint de "Detalhe da demanda"). Por ora o mock
+ * aceita a descrição no payload apenas para validar o formulário ponta a ponta.
+ */
+export async function mockCriarDemanda(
+  userId: string,
+  payload: NovaDemandaPayload,
+): Promise<DemandaResumo> {
+  const agora = new Date().toISOString();
+  const novaDemanda: DemandaResumo = {
+    id: `dem_${Date.now()}`,
+    protocolo: gerarProtocolo(),
+    assunto: payload.assunto,
+    categoria: payload.categoria,
+    status: 'recebida',
+    criadaEm: agora,
+    atualizadaEm: agora,
+  };
+  mockDemandasPorUsuario[userId] = [novaDemanda, ...(mockDemandasPorUsuario[userId] ?? [])];
+  return mockDelay(novaDemanda, 900);
 }

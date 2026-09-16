@@ -22,3 +22,9 @@ export type DemandaResumo = {
   criadaEm: string;
   atualizadaEm: string;
 };
+
+export type NovaDemandaPayload = {
+  categoria: DemandaCategoria;
+  assunto: string;
+  descricao: string;
+};

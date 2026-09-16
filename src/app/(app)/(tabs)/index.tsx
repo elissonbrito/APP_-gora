@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -27,13 +27,22 @@ export default function HomeScreen() {
     .sort((a, b) => b.atualizadaEm.localeCompare(a.atualizadaEm))
     .slice(0, 3);
 
+  const logout = useAuthStore((state) => state.logout);
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            Olá, {primeiroNome || 'cidadão'}
-          </ThemedText>
+          <View style={styles.headerRow}>
+            <ThemedText type="title" style={styles.title}>
+              Olá, {primeiroNome || 'cidadão'}
+            </ThemedText>
+            <Pressable onPress={() => logout()} hitSlop={8}>
+              <ThemedText type="link" themeColor="primary">
+                Sair
+              </ThemedText>
+            </Pressable>
+          </View>
           <ThemedText type="default" themeColor="textSecondary">
             Acompanhe suas solicitações ao ÁGORA
           </ThemedText>
@@ -117,10 +126,17 @@ const styles = StyleSheet.create({
   header: {
     gap: Spacing.half,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
   title: {
     fontSize: 32,
     lineHeight: 38,
     textAlign: 'left',
+    flexShrink: 1,
   },
   summaryRow: {
     flexDirection: 'row',
