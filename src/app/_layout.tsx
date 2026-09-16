@@ -1,18 +1,42 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { queryClient } from '@/lib/query-client';
+import { useAuthStore } from '@/stores/auth-store';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
+export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const status = useAuthStore((state) => state.status);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
+
+  useEffect(() => {
+    restoreSession();
+  }, [restoreSession]);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <AnimatedSplashOverlay />
+        {status !== 'checking' && (
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Protected guard={status === 'signed-in'}>
+              <Stack.Screen name="(app)" />
+            </Stack.Protected>
+
+            <Stack.Protected guard={status !== 'signed-in'}>
+              <Stack.Screen name="login" />
+              <Stack.Screen name="cadastro" />
+              <Stack.Screen name="recuperar-senha" />
+            </Stack.Protected>
+          </Stack>
+        )}
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
