@@ -43,6 +43,9 @@ export default function LoginScreen() {
             ÁGORA
           </ThemedText>
           <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+            Onde sua voz, tem força.
+          </ThemedText>
+          <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
             Entre para acompanhar suas solicitações
           </ThemedText>
         </ThemedView>

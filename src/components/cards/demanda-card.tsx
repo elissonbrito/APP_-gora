@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { Link } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Badge } from '@/components/ui/badge';
@@ -9,20 +10,24 @@ import type { DemandaResumo } from '@/types/demanda';
 
 export function DemandaCard({ demanda }: { demanda: DemandaResumo }) {
   return (
-    <Card>
-      <View style={styles.headerRow}>
-        <ThemedText type="small" themeColor="textSecondary">
-          {demanda.protocolo}
-        </ThemedText>
-        <Badge
-          label={demandaStatusLabel[demanda.status]}
-          tone={demandaStatusTone[demanda.status]}
-        />
-      </View>
-      <ThemedText type="default" numberOfLines={2}>
-        {demanda.assunto}
-      </ThemedText>
-    </Card>
+    <Link href={{ pathname: '/demandas/[id]', params: { id: demanda.id } }} asChild>
+      <Pressable accessibilityRole="button" accessibilityLabel={`Ver demanda ${demanda.protocolo}`}>
+        <Card>
+          <View style={styles.headerRow}>
+            <ThemedText type="small" themeColor="textSecondary">
+              {demanda.protocolo}
+            </ThemedText>
+            <Badge
+              label={demandaStatusLabel[demanda.status]}
+              tone={demandaStatusTone[demanda.status]}
+            />
+          </View>
+          <ThemedText type="default" numberOfLines={2}>
+            {demanda.assunto}
+          </ThemedText>
+        </Card>
+      </Pressable>
+    </Link>
   );
 }
 
