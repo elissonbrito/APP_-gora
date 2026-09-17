@@ -18,11 +18,13 @@ export function ErrorState({
   const theme = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} accessibilityLiveRegion="polite">
       <SymbolView
         name={{ ios: 'exclamationmark.triangle', android: 'error_outline', web: 'error_outline' }}
         size={40}
         tintColor={theme.danger}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
       />
       <ThemedText type="default" style={styles.centerText}>
         {message}

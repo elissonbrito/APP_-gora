@@ -16,14 +16,23 @@ Notifications.setNotificationHandler({
   }),
 });
 
+/**
+ * Nunca deixa a falha de permissão virar uma promise rejeitada sem tratamento
+ * — é chamada de forma "fire-and-forget" no boot do app, e não ter push é uma
+ * degradação aceitável, não um motivo para travar a navegação.
+ */
 export async function solicitarPermissaoNotificacoes(): Promise<boolean> {
-  const atual = await Notifications.getPermissionsAsync();
-  if (atual.status === 'granted') return true;
+  try {
+    const atual = await Notifications.getPermissionsAsync();
+    if (atual.status === 'granted') return true;
 
-  const solicitada = await Notifications.requestPermissionsAsync({
-    ios: { allowAlert: true, allowBadge: true, allowSound: true },
-  });
-  return solicitada.status === 'granted';
+    const solicitada = await Notifications.requestPermissionsAsync({
+      ios: { allowAlert: true, allowBadge: true, allowSound: true },
+    });
+    return solicitada.status === 'granted';
+  } catch {
+    return false;
+  }
 }
 
 export type NotificacaoDeepLinkData = {

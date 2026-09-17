@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -38,76 +39,78 @@ export default function LoginScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            ÁGORA
-          </ThemedText>
-          <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
-            Onde sua voz, tem força.
-          </ThemedText>
-          <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
-            Entre para acompanhar suas solicitações
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.form}>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field }) => (
-              <Input
-                label="E-mail"
-                placeholder="seuemail@exemplo.com"
-                autoCapitalize="none"
-                autoComplete="email"
-                keyboardType="email-address"
-                errorMessage={errors.email?.message}
-                value={field.value}
-                onChangeText={field.onChange}
-                onBlur={field.onBlur}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="senha"
-            render={({ field }) => (
-              <Input
-                label="Senha"
-                placeholder="Sua senha"
-                secureTextEntry
-                autoComplete="password"
-                errorMessage={errors.senha?.message}
-                value={field.value}
-                onChangeText={field.onChange}
-                onBlur={field.onBlur}
-              />
-            )}
-          />
-
-          {errors.root?.message ? (
-            <ThemedText type="small" themeColor="danger">
-              {errors.root.message}
+        <KeyboardAwareScroll contentContainerStyle={styles.scrollContent}>
+          <ThemedView style={styles.header}>
+            <ThemedText type="title" style={styles.title}>
+              ÁGORA
             </ThemedText>
-          ) : null}
+            <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+              Onde sua voz, tem força.
+            </ThemedText>
+            <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+              Entre para acompanhar suas solicitações
+            </ThemedText>
+          </ThemedView>
 
-          <Button label="Entrar" onPress={onSubmit} loading={login.isPending} />
+          <ThemedView style={styles.form}>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <Input
+                  label="E-mail"
+                  placeholder="seuemail@exemplo.com"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  keyboardType="email-address"
+                  errorMessage={errors.email?.message}
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="senha"
+              render={({ field }) => (
+                <Input
+                  label="Senha"
+                  placeholder="Sua senha"
+                  secureTextEntry
+                  autoComplete="password"
+                  errorMessage={errors.senha?.message}
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
 
-          <Link href="/recuperar-senha">
-            <ThemedText type="link" themeColor="primary">
-              Esqueci minha senha
+            {errors.root?.message ? (
+              <ThemedText type="small" themeColor="danger">
+                {errors.root.message}
+              </ThemedText>
+            ) : null}
+
+            <Button label="Entrar" onPress={onSubmit} loading={login.isPending} />
+
+            <Link href="/recuperar-senha">
+              <ThemedText type="link" themeColor="primary">
+                Esqueci minha senha
+              </ThemedText>
+            </Link>
+          </ThemedView>
+
+          <Link href="/cadastro" style={styles.footerLink}>
+            <ThemedText type="default">
+              Não tem conta?{' '}
+              <ThemedText type="default" themeColor="primary">
+                Cadastre-se
+              </ThemedText>
             </ThemedText>
           </Link>
-        </ThemedView>
-
-        <Link href="/cadastro" style={styles.footerLink}>
-          <ThemedText type="default">
-            Não tem conta?{' '}
-            <ThemedText type="default" themeColor="primary">
-              Cadastre-se
-            </ThemedText>
-          </ThemedText>
-        </Link>
+        </KeyboardAwareScroll>
       </SafeAreaView>
     </ThemedView>
   );
@@ -119,6 +122,9 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
     gap: Spacing.five,

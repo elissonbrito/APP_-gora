@@ -22,6 +22,8 @@ export function EmptyState({ title, description, actionLabel, onAction }: EmptyS
         name={{ ios: 'tray', android: 'inbox', web: 'inbox' }}
         size={40}
         tintColor={theme.textSecondary}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
       />
       <ThemedText type="subtitle" style={styles.centerText}>
         {title}

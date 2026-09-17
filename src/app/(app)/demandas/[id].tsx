@@ -26,16 +26,25 @@ export default function DemandaDetalheScreen() {
 
   async function handleCopiarProtocolo() {
     if (!demanda) return;
-    await Clipboard.setStringAsync(demanda.protocolo);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2000);
+    try {
+      await Clipboard.setStringAsync(demanda.protocolo);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    } catch {
+      // Copiar é uma conveniência — se falhar, o protocolo continua visível
+      // na tela para o cidadão anotar manualmente.
+    }
   }
 
   async function handleCompartilhar() {
     if (!demanda) return;
-    await Share.share({
-      message: `Protocolo ÁGORA ${demanda.protocolo}: ${demanda.assunto}`,
-    });
+    try {
+      await Share.share({
+        message: `Protocolo ÁGORA ${demanda.protocolo}: ${demanda.assunto}`,
+      });
+    } catch {
+      // Compartilhar é opcional — cancelar ou falhar não deve gerar erro.
+    }
   }
 
   return (

@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -33,52 +34,54 @@ export default function RecuperarSenhaScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.header}>
-          <ThemedText type="title" style={styles.title}>
-            Recuperar senha
-          </ThemedText>
-          <ThemedText type="default" themeColor="textSecondary">
-            Informe seu e-mail para receber as instruções.
-          </ThemedText>
-        </ThemedView>
-
-        {enviado ? (
-          <ThemedText type="default">
-            Se este e-mail estiver cadastrado, você receberá as instruções em instantes.
-          </ThemedText>
-        ) : (
-          <ThemedView style={styles.form}>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field }) => (
-                <Input
-                  label="E-mail"
-                  placeholder="seuemail@exemplo.com"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  keyboardType="email-address"
-                  errorMessage={errors.email?.message}
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-
-            <Button
-              label="Enviar instruções"
-              onPress={onSubmit}
-              loading={requestPasswordReset.isPending}
-            />
+        <KeyboardAwareScroll contentContainerStyle={styles.scrollContent}>
+          <ThemedView style={styles.header}>
+            <ThemedText type="title" style={styles.title}>
+              Recuperar senha
+            </ThemedText>
+            <ThemedText type="default" themeColor="textSecondary">
+              Informe seu e-mail para receber as instruções.
+            </ThemedText>
           </ThemedView>
-        )}
 
-        <Link href="/login" style={styles.footerLink}>
-          <ThemedText type="default" themeColor="primary">
-            Voltar para o login
-          </ThemedText>
-        </Link>
+          {enviado ? (
+            <ThemedText type="default">
+              Se este e-mail estiver cadastrado, você receberá as instruções em instantes.
+            </ThemedText>
+          ) : (
+            <ThemedView style={styles.form}>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field }) => (
+                  <Input
+                    label="E-mail"
+                    placeholder="seuemail@exemplo.com"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    keyboardType="email-address"
+                    errorMessage={errors.email?.message}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+
+              <Button
+                label="Enviar instruções"
+                onPress={onSubmit}
+                loading={requestPasswordReset.isPending}
+              />
+            </ThemedView>
+          )}
+
+          <Link href="/login" style={styles.footerLink}>
+            <ThemedText type="default" themeColor="primary">
+              Voltar para o login
+            </ThemedText>
+          </Link>
+        </KeyboardAwareScroll>
       </SafeAreaView>
     </ThemedView>
   );
@@ -90,6 +93,9 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
     gap: Spacing.five,

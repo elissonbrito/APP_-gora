@@ -28,6 +28,8 @@ export function Skeleton({ width = '100%', height = 16, radius = Radius.small }:
 
   return (
     <Animated.View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
       style={[
         styles.base,
         animatedStyle,

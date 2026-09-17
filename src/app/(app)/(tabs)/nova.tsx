@@ -2,11 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CategoriaSelect } from '@/components/forms/categoria-select';
 import { LocationField } from '@/components/forms/location-field';
+import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -76,7 +77,7 @@ export default function NovaDemandaScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <KeyboardAwareScroll contentContainerStyle={styles.scrollContent}>
           <ThemedText type="title" style={styles.title}>
             Nova demanda
           </ThemedText>
@@ -148,7 +149,7 @@ export default function NovaDemandaScreen() {
           ) : null}
 
           <Button label="Enviar solicitação" onPress={onSubmit} loading={criarDemanda.isPending} />
-        </ScrollView>
+        </KeyboardAwareScroll>
       </SafeAreaView>
     </ThemedView>
   );

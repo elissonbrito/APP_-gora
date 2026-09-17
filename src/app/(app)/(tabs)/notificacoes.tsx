@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { NotificacaoCard } from '@/components/cards/notificacao-card';
@@ -48,15 +48,14 @@ export default function NotificacoesScreen() {
             description="Quando houver novidades sobre suas solicitações, elas aparecem aqui."
           />
         ) : (
-          <ScrollView contentContainerStyle={styles.list}>
-            {notificacoes.map((notificacao) => (
-              <NotificacaoCard
-                key={notificacao.id}
-                notificacao={notificacao}
-                onPress={() => handlePress(notificacao)}
-              />
-            ))}
-          </ScrollView>
+          <FlatList
+            data={notificacoes}
+            keyExtractor={(notificacao) => notificacao.id}
+            renderItem={({ item }) => (
+              <NotificacaoCard notificacao={item} onPress={() => handlePress(item)} />
+            )}
+            contentContainerStyle={styles.list}
+          />
         )}
       </SafeAreaView>
     </ThemedView>

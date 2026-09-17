@@ -42,7 +42,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   async logout() {
-    await secureStorage.removeItem(SESSION_STORAGE_KEY);
+    try {
+      await secureStorage.removeItem(SESSION_STORAGE_KEY);
+    } catch {
+      // Segue mesmo se o Secure Store falhar — o estado em memória precisa
+      // ser limpo de qualquer forma, senão o usuário fica com a sessão
+      // "presa" mesmo tocando em Sair.
+    }
     set({ user: null, tokens: null, status: 'signed-out' });
   },
 

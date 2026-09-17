@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -73,11 +73,12 @@ export default function DemandasScreen() {
             }
           />
         ) : (
-          <ScrollView contentContainerStyle={styles.list}>
-            {demandasFiltradas.map((demanda) => (
-              <DemandaCard key={demanda.id} demanda={demanda} />
-            ))}
-          </ScrollView>
+          <FlatList
+            data={demandasFiltradas}
+            keyExtractor={(demanda) => demanda.id}
+            renderItem={({ item }) => <DemandaCard demanda={item} />}
+            contentContainerStyle={styles.list}
+          />
         )}
       </SafeAreaView>
     </ThemedView>
