@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -32,78 +32,80 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.header}>
-          <View style={styles.headerRow}>
-            <ThemedText type="title" style={styles.title}>
-              Olá, {primeiroNome || 'cidadão'}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <ThemedView style={styles.header}>
+            <View style={styles.headerRow}>
+              <ThemedText type="title" style={styles.title}>
+                Olá, {primeiroNome || 'cidadão'}
+              </ThemedText>
+              <Pressable onPress={() => logout()} hitSlop={8}>
+                <ThemedText type="link" themeColor="primary">
+                  Sair
+                </ThemedText>
+              </Pressable>
+            </View>
+            <ThemedText type="default" themeColor="textSecondary">
+              Acompanhe suas solicitações ao ÁGORA
             </ThemedText>
-            <Pressable onPress={() => logout()} hitSlop={8}>
-              <ThemedText type="link" themeColor="primary">
-                Sair
-              </ThemedText>
-            </Pressable>
-          </View>
-          <ThemedText type="default" themeColor="textSecondary">
-            Acompanhe suas solicitações ao ÁGORA
+          </ThemedView>
+
+          <Link href="/demandas/nova" asChild>
+            <Button label="Nova demanda" />
+          </Link>
+
+          {isLoading ? (
+            <View style={styles.summaryRow}>
+              <Skeleton height={72} />
+              <Skeleton height={72} />
+            </View>
+          ) : isError ? null : (
+            <View style={styles.summaryRow}>
+              <Card style={styles.summaryCard}>
+                <ThemedText type="title" style={styles.summaryNumber}>
+                  {emAndamento}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Em andamento
+                </ThemedText>
+              </Card>
+              <Card style={styles.summaryCard}>
+                <ThemedText type="title" style={styles.summaryNumber}>
+                  {concluidas}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Concluídas
+                </ThemedText>
+              </Card>
+            </View>
+          )}
+
+          <ThemedText type="smallBold" style={styles.sectionTitle}>
+            Últimas atualizações
           </ThemedText>
-        </ThemedView>
 
-        <Link href="/demandas/nova" asChild>
-          <Button label="Nova demanda" />
-        </Link>
-
-        {isLoading ? (
-          <View style={styles.summaryRow}>
-            <Skeleton height={72} />
-            <Skeleton height={72} />
-          </View>
-        ) : isError ? null : (
-          <View style={styles.summaryRow}>
-            <Card style={styles.summaryCard}>
-              <ThemedText type="title" style={styles.summaryNumber}>
-                {emAndamento}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Em andamento
-              </ThemedText>
-            </Card>
-            <Card style={styles.summaryCard}>
-              <ThemedText type="title" style={styles.summaryNumber}>
-                {concluidas}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Concluídas
-              </ThemedText>
-            </Card>
-          </View>
-        )}
-
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
-          Últimas atualizações
-        </ThemedText>
-
-        {isLoading ? (
-          <View style={styles.list}>
-            <Skeleton height={80} />
-            <Skeleton height={80} />
-          </View>
-        ) : isError ? (
-          <ErrorState
-            message="Não foi possível carregar suas demandas."
-            onRetry={() => refetch()}
-          />
-        ) : ultimasAtualizacoes.length === 0 ? (
-          <EmptyState
-            title="Você ainda não possui solicitações"
-            description="Quando abrir uma demanda, o acompanhamento aparece aqui."
-          />
-        ) : (
-          <View style={styles.list}>
-            {ultimasAtualizacoes.map((demanda) => (
-              <DemandaCard key={demanda.id} demanda={demanda} />
-            ))}
-          </View>
-        )}
+          {isLoading ? (
+            <View style={styles.list}>
+              <Skeleton height={80} />
+              <Skeleton height={80} />
+            </View>
+          ) : isError ? (
+            <ErrorState
+              message="Não foi possível carregar suas demandas."
+              onRetry={() => refetch()}
+            />
+          ) : ultimasAtualizacoes.length === 0 ? (
+            <EmptyState
+              title="Você ainda não possui solicitações"
+              description="Quando abrir uma demanda, o acompanhamento aparece aqui."
+            />
+          ) : (
+            <View style={styles.list}>
+              {ultimasAtualizacoes.map((demanda) => (
+                <DemandaCard key={demanda.id} demanda={demanda} />
+              ))}
+            </View>
+          )}
+        </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
@@ -115,6 +117,8 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.four,
     paddingBottom: BottomTabInset + Spacing.three,

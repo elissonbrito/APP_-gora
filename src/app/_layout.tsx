@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { useNotificationDeepLink } from '@/features/notificacoes/use-notification-deep-link';
 import { queryClient } from '@/lib/query-client';
+import { solicitarPermissaoNotificacoes } from '@/lib/notifications';
 import { useAuthStore } from '@/stores/auth-store';
 
 SplashScreen.preventAutoHideAsync();
@@ -18,6 +20,14 @@ export default function RootLayout() {
   useEffect(() => {
     restoreSession();
   }, [restoreSession]);
+
+  useEffect(() => {
+    if (status === 'signed-in') {
+      solicitarPermissaoNotificacoes();
+    }
+  }, [status]);
+
+  useNotificationDeepLink();
 
   return (
     <QueryClientProvider client={queryClient}>

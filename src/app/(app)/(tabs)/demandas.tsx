@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -35,19 +35,21 @@ export default function DemandasScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedText type="title" style={styles.title}>
-          Demandas
-        </ThemedText>
+        <View style={styles.header}>
+          <ThemedText type="title" style={styles.title}>
+            Demandas
+          </ThemedText>
 
-        <View style={styles.chips}>
-          {filtros.map((item) => (
-            <Chip
-              key={item.value}
-              label={item.label}
-              selected={item.value === filtro}
-              onPress={() => setFiltro(item.value)}
-            />
-          ))}
+          <View style={styles.chips}>
+            {filtros.map((item) => (
+              <Chip
+                key={item.value}
+                label={item.label}
+                selected={item.value === filtro}
+                onPress={() => setFiltro(item.value)}
+              />
+            ))}
+          </View>
         </View>
 
         {isLoading ? (
@@ -71,11 +73,11 @@ export default function DemandasScreen() {
             }
           />
         ) : (
-          <View style={styles.list}>
+          <ScrollView contentContainerStyle={styles.list}>
             {demandasFiltradas.map((demanda) => (
               <DemandaCard key={demanda.id} demanda={demanda} />
             ))}
-          </View>
+          </ScrollView>
         )}
       </SafeAreaView>
     </ThemedView>
@@ -91,10 +93,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.four,
     paddingBottom: BottomTabInset + Spacing.three,
-    gap: Spacing.three,
     alignSelf: 'center',
     width: '100%',
     maxWidth: MaxContentWidth,
+  },
+  header: {
+    gap: Spacing.three,
+    marginBottom: Spacing.three,
   },
   title: {
     fontSize: 32,
@@ -108,6 +113,5 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: Spacing.three,
-    marginTop: Spacing.two,
   },
 });
