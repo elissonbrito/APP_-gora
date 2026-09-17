@@ -35,3 +35,17 @@ export type NovaDemandaPayload = {
   descricao: string;
   localizacao: DemandaLocalizacao;
 };
+
+export type DemandaHistoricoEvento = {
+  id: string;
+  status: DemandaStatus;
+  data: string;
+  mensagem?: string;
+};
+
+export type DemandaDetalhe = DemandaResumo & {
+  descricao: string;
+  localizacao: DemandaLocalizacao;
+  setorResponsavel?: string;
+  historico: DemandaHistoricoEvento[];
+};

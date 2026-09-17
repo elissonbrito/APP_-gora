@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { criarDemanda, listarMinhasDemandas } from '@/services/demandas';
+import { criarDemanda, listarMinhasDemandas, obterDemanda } from '@/services/demandas';
 import { demandasKeys } from '@/services/demandas/queryKeys';
 import { useAuthStore } from '@/stores/auth-store';
 import type { NovaDemandaPayload } from '@/types/demanda';
@@ -12,6 +12,14 @@ export function useMinhasDemandas() {
     queryKey: demandasKeys.minhas(userId ?? ''),
     queryFn: () => listarMinhasDemandas(userId as string),
     enabled: Boolean(userId),
+  });
+}
+
+export function useDemanda(id: string | undefined) {
+  return useQuery({
+    queryKey: demandasKeys.detalhe(id ?? ''),
+    queryFn: () => obterDemanda(id as string),
+    enabled: Boolean(id),
   });
 }
 
