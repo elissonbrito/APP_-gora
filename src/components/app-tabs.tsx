@@ -31,6 +31,11 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="nova">
+        <NativeTabs.Trigger.Label>Nova</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="plus.circle" md="add_circle" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="notificacoes">
         <NativeTabs.Trigger.Label>Notificações</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="bell" md="notifications" />

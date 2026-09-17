@@ -40,7 +40,7 @@ export default function HomeScreen() {
             </ThemedText>
           </ThemedView>
 
-          <Link href="/demandas/nova" asChild>
+          <Link href="/nova" asChild>
             <Button label="Nova demanda" />
           </Link>
 

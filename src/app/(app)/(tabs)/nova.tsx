@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -11,7 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useCriarDemanda } from '@/features/demandas/hooks';
 import { novaDemandaSchema, type NovaDemandaFormValues } from '@/schemas/demanda';
 import { AppError } from '@/services/api/errors';
@@ -22,6 +22,7 @@ export default function NovaDemandaScreen() {
     control,
     handleSubmit,
     setError,
+    reset,
     formState: { errors },
   } = useForm<NovaDemandaFormValues>({
     resolver: zodResolver(novaDemandaSchema),
@@ -45,10 +46,14 @@ export default function NovaDemandaScreen() {
     }
   });
 
+  function handleNovaSolicitacao() {
+    setProtocolo(null);
+    reset();
+  }
+
   if (protocolo) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ headerShown: true, title: 'Nova demanda' }} />
         <SafeAreaView style={styles.confirmationSafeArea}>
           <ThemedText type="subtitle">Solicitação registrada</ThemedText>
           <ThemedText type="default" themeColor="textSecondary">
@@ -57,7 +62,12 @@ export default function NovaDemandaScreen() {
           <ThemedText type="title" style={styles.protocolo}>
             {protocolo}
           </ThemedText>
-          <Button label="Voltar para a Home" onPress={() => router.replace('/')} />
+          <Button
+            label="Registrar outra solicitação"
+            variant="secondary"
+            onPress={handleNovaSolicitacao}
+          />
+          <Button label="Ir para a Home" onPress={() => router.replace('/')} />
         </SafeAreaView>
       </ThemedView>
     );
@@ -65,9 +75,11 @@ export default function NovaDemandaScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerShown: true, title: 'Nova demanda' }} />
-      <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
+      <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          <ThemedText type="title" style={styles.title}>
+            Nova demanda
+          </ThemedText>
           <ThemedText type="default" themeColor="textSecondary">
             Conte o que está acontecendo e onde.
           </ThemedText>
@@ -150,8 +162,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Spacing.four,
+    paddingHorizontal: Spacing.four,
+    paddingTop: Spacing.four,
+    paddingBottom: BottomTabInset + Spacing.three,
     gap: Spacing.four,
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: MaxContentWidth,
+  },
+  title: {
+    fontSize: 32,
+    lineHeight: 38,
+    textAlign: 'left',
   },
   textarea: {
     minHeight: 120,
