@@ -1,3 +1,5 @@
+import type { Avaliacao } from './avaliacao';
+
 /**
  * Estados possíveis de uma demanda, conforme a especificação do produto.
  * Não inventar novos status aqui — devem ser derivados do que a API real do
@@ -48,4 +50,5 @@ export type DemandaDetalhe = DemandaResumo & {
   localizacao: DemandaLocalizacao;
   setorResponsavel?: string;
   historico: DemandaHistoricoEvento[];
+  avaliacao?: Avaliacao;
 };

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AvaliacaoSection } from '@/components/cards/avaliacao-section';
 import { ErrorState } from '@/components/feedback/error-state';
 import { Skeleton } from '@/components/loading/skeleton';
 import { ThemedText } from '@/components/themed-text';
@@ -101,6 +102,10 @@ export default function DemandaDetalheScreen() {
               </ThemedText>
               <StatusTimeline historico={demanda.historico} />
             </View>
+
+            {demanda.status === 'concluida' ? (
+              <AvaliacaoSection demandaId={demanda.id} avaliacao={demanda.avaliacao} />
+            ) : null}
           </ScrollView>
         )}
       </SafeAreaView>

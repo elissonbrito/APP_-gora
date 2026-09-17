@@ -1,6 +1,7 @@
 // MOCK CONTRACT — ver services/api/mock/auth.mock.ts. Dados fictícios até que
 // a API real do ÁGORA esteja disponível para este projeto.
 import { AppError } from '@/services/api/errors';
+import type { Avaliacao, NovaAvaliacaoPayload } from '@/types/avaliacao';
 import type { DemandaDetalhe, DemandaResumo, NovaDemandaPayload } from '@/types/demanda';
 
 import { mockDelay } from './network';
@@ -107,7 +108,14 @@ const mockDemandasPorUsuario: Record<string, DemandaDetalhe[]> = {
 };
 
 function toResumo(demanda: DemandaDetalhe): DemandaResumo {
-  const { descricao: _descricao, localizacao: _localizacao, setorResponsavel: _setor, historico: _historico, ...resumo } = demanda;
+  const {
+    descricao: _descricao,
+    localizacao: _localizacao,
+    setorResponsavel: _setor,
+    historico: _historico,
+    avaliacao: _avaliacao,
+    ...resumo
+  } = demanda;
   return resumo;
 }
 
@@ -158,4 +166,32 @@ export async function mockCriarDemanda(
   };
   mockDemandasPorUsuario[userId] = [novaDemanda, ...(mockDemandasPorUsuario[userId] ?? [])];
   return mockDelay(toResumo(novaDemanda), 900);
+}
+
+export async function mockAvaliarDemanda(
+  demandaId: string,
+  payload: NovaAvaliacaoPayload,
+): Promise<Avaliacao> {
+  const demanda = Object.values(mockDemandasPorUsuario)
+    .flat()
+    .find((item) => item.id === demandaId);
+  if (!demanda) {
+    throw new AppError('not_found', 'Não encontramos esta demanda.');
+  }
+  if (demanda.status !== 'concluida') {
+    throw new AppError('validation', 'Só é possível avaliar demandas concluídas.');
+  }
+  if (demanda.avaliacao) {
+    throw new AppError('validation', 'Esta demanda já foi avaliada.');
+  }
+
+  const avaliacao: Avaliacao = {
+    id: `av_${Date.now()}`,
+    demandaId,
+    nota: payload.nota,
+    comentario: payload.comentario,
+    criadaEm: new Date().toISOString(),
+  };
+  demanda.avaliacao = avaliacao;
+  return mockDelay(avaliacao, 500);
 }

@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { criarDemanda, listarMinhasDemandas, obterDemanda } from '@/services/demandas';
+import { avaliarDemanda, criarDemanda, listarMinhasDemandas, obterDemanda } from '@/services/demandas';
 import { demandasKeys } from '@/services/demandas/queryKeys';
 import { useAuthStore } from '@/stores/auth-store';
-import type { NovaDemandaPayload } from '@/types/demanda';
+import type { NovaAvaliacaoPayload } from '@/types/avaliacao';
+import type { DemandaDetalhe, NovaDemandaPayload } from '@/types/demanda';
 
 export function useMinhasDemandas() {
   const userId = useAuthStore((state) => state.user?.id);
@@ -33,6 +34,19 @@ export function useCriarDemanda() {
       if (userId) {
         queryClient.invalidateQueries({ queryKey: demandasKeys.minhas(userId) });
       }
+    },
+  });
+}
+
+export function useAvaliarDemanda(demandaId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: NovaAvaliacaoPayload) => avaliarDemanda(demandaId, payload),
+    onSuccess: (avaliacao) => {
+      queryClient.setQueryData<DemandaDetalhe>(demandasKeys.detalhe(demandaId), (atual) =>
+        atual ? { ...atual, avaliacao } : atual,
+      );
     },
   });
 }
