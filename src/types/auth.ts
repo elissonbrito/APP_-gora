@@ -44,3 +44,13 @@ export type AuthSession = {
   user: User;
   tokens: AuthTokens;
 };
+
+export type AtualizarPerfilPayload = {
+  nome: string;
+  telefone?: string;
+};
+
+export type AlterarSenhaPayload = {
+  senhaAtual: string;
+  novaSenha: string;
+};

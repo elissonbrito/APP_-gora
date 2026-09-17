@@ -21,6 +21,7 @@ type AuthState = {
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
+  setUser: (user: User) => void;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -58,6 +59,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       await secureStorage.removeItem(SESSION_STORAGE_KEY);
       set({ user: null, tokens: null, status: 'signed-out' });
     }
+  },
+
+  setUser(user) {
+    set({ user });
   },
 }));
 

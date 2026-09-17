@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -27,23 +27,14 @@ export default function HomeScreen() {
     .sort((a, b) => b.atualizadaEm.localeCompare(a.atualizadaEm))
     .slice(0, 3);
 
-  const logout = useAuthStore((state) => state.logout);
-
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <ThemedView style={styles.header}>
-            <View style={styles.headerRow}>
-              <ThemedText type="title" style={styles.title}>
-                Olá, {primeiroNome || 'cidadão'}
-              </ThemedText>
-              <Pressable onPress={() => logout()} hitSlop={8}>
-                <ThemedText type="link" themeColor="primary">
-                  Sair
-                </ThemedText>
-              </Pressable>
-            </View>
+            <ThemedText type="title" style={styles.title}>
+              Olá, {primeiroNome || 'cidadão'}
+            </ThemedText>
             <ThemedText type="default" themeColor="textSecondary">
               Acompanhe suas solicitações ao ÁGORA
             </ThemedText>
@@ -129,12 +120,6 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: Spacing.half,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: Spacing.three,
   },
   title: {
     fontSize: 32,

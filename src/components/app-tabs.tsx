@@ -38,6 +38,11 @@ export default function AppTabs() {
           {naoLidas > 0 ? String(naoLidas) : undefined}
         </NativeTabs.Trigger.Badge>
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="perfil">
+        <NativeTabs.Trigger.Label>Perfil</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="person" md="person" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

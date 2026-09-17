@@ -3,7 +3,14 @@
 // (login, cadastro, sessão, perfil). Ao integrar com o backend real, substitua
 // apenas as implementações em services/auth/index.ts — nada na UI muda.
 import { AppError } from '@/services/api/errors';
-import type { AuthTokens, LoginCredentials, RegisterPayload, User } from '@/types/auth';
+import type {
+  AlterarSenhaPayload,
+  AtualizarPerfilPayload,
+  AuthTokens,
+  LoginCredentials,
+  RegisterPayload,
+  User,
+} from '@/types/auth';
 
 import { mockDelay } from './network';
 
@@ -104,5 +111,30 @@ export async function mockFetchProfile(accessToken: string): Promise<User> {
  * inteiramente a cargo do backend quando ele existir.
  */
 export async function mockRequestPasswordReset(_email: string): Promise<void> {
+  await mockDelay(undefined, 500);
+}
+
+export async function mockAtualizarPerfil(
+  userId: string,
+  payload: AtualizarPerfilPayload,
+): Promise<User> {
+  const record = mockUsers.find((candidate) => candidate.id === userId);
+  if (!record) {
+    throw new AppError('auth');
+  }
+  record.nome = payload.nome;
+  record.telefone = payload.telefone;
+  return mockDelay(toPublicUser(record));
+}
+
+export async function mockAlterarSenha(
+  userId: string,
+  payload: AlterarSenhaPayload,
+): Promise<void> {
+  const record = mockUsers.find((candidate) => candidate.id === userId);
+  if (!record || record.senha !== payload.senhaAtual) {
+    throw new AppError('validation', 'Senha atual incorreta.');
+  }
+  record.senha = payload.novaSenha;
   await mockDelay(undefined, 500);
 }

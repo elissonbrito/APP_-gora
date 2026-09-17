@@ -30,6 +30,9 @@ export default function AppTabs() {
           <TabTrigger name="notificacoes" href="/notificacoes" asChild>
             <TabButton>Notificações</TabButton>
           </TabTrigger>
+          <TabTrigger name="perfil" href="/perfil" asChild>
+            <TabButton>Perfil</TabButton>
+          </TabTrigger>
         </CustomTabList>
       </TabList>
     </Tabs>

@@ -1,13 +1,22 @@
 import { env } from '@/config/env';
 import { apiClient } from '@/services/api/client';
 import {
+  mockAlterarSenha,
+  mockAtualizarPerfil,
   mockFetchProfile,
   mockLogin,
   mockRefreshSession,
   mockRegister,
   mockRequestPasswordReset,
 } from '@/services/api/mock/auth.mock';
-import type { AuthTokens, LoginCredentials, RegisterPayload, User } from '@/types/auth';
+import type {
+  AlterarSenhaPayload,
+  AtualizarPerfilPayload,
+  AuthTokens,
+  LoginCredentials,
+  RegisterPayload,
+  User,
+} from '@/types/auth';
 
 type AuthResult = { user: User; tokens: AuthTokens };
 
@@ -49,4 +58,18 @@ export async function fetchProfile(accessToken: string): Promise<User> {
 export async function requestPasswordReset(email: string): Promise<void> {
   if (env.apiMode === 'mock') return mockRequestPasswordReset(email);
   await apiClient.post('/auth/forgot-password', { email });
+}
+
+export async function atualizarPerfil(
+  userId: string,
+  payload: AtualizarPerfilPayload,
+): Promise<User> {
+  if (env.apiMode === 'mock') return mockAtualizarPerfil(userId, payload);
+  const { data } = await apiClient.patch<User>('/auth/me', payload);
+  return data;
+}
+
+export async function alterarSenha(userId: string, payload: AlterarSenhaPayload): Promise<void> {
+  if (env.apiMode === 'mock') return mockAlterarSenha(userId, payload);
+  await apiClient.post('/auth/alterar-senha', payload);
 }
