@@ -5,6 +5,7 @@ const base = {
   assunto: 'Buraco na rua principal',
   descricao: 'Buraco grande e perigoso, próximo à esquina, atrapalhando o trânsito de pedestres.',
   localizacao: { endereco: 'Rua Principal, 100' },
+  fotos: [] as string[],
 };
 
 describe('novaDemandaSchema', () => {
@@ -33,5 +34,21 @@ describe('novaDemandaSchema', () => {
       localizacao: { endereco: '' },
     });
     expect(resultado.success).toBe(false);
+  });
+
+  test('rejeita mais de 5 fotos', () => {
+    const resultado = novaDemandaSchema.safeParse({
+      ...base,
+      fotos: Array.from({ length: 6 }, (_, i) => `file://foto-${i}.jpg`),
+    });
+    expect(resultado.success).toBe(false);
+  });
+
+  test('aceita até 5 fotos', () => {
+    const resultado = novaDemandaSchema.safeParse({
+      ...base,
+      fotos: Array.from({ length: 5 }, (_, i) => `file://foto-${i}.jpg`),
+    });
+    expect(resultado.success).toBe(true);
   });
 });

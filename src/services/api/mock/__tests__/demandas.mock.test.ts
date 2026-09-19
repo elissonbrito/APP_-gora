@@ -14,6 +14,7 @@ describe('mockCriarDemanda', () => {
       assunto: 'Buraco na esquina',
       descricao: 'Buraco grande e perigoso na esquina da rua principal.',
       localizacao: { endereco: 'Rua Principal, 10' },
+      fotos: [],
     });
     expect(demanda.protocolo).toMatch(/^AG-\d{4}-\d{6}$/);
     expect(demanda.status).toBe('recebida');
@@ -25,6 +26,7 @@ describe('mockCriarDemanda', () => {
       assunto: 'Lixo acumulado na calçada',
       descricao: 'O lixo não é recolhido há vários dias na minha rua.',
       localizacao: { endereco: 'Rua das Palmeiras, 55' },
+      fotos: [],
     });
     const lista = await mockListarMinhasDemandas(USER_ID);
     expect(lista.some((item) => item.id === criada.id)).toBe(true);

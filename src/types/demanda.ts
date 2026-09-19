@@ -36,6 +36,8 @@ export type NovaDemandaPayload = {
   assunto: string;
   descricao: string;
   localizacao: DemandaLocalizacao;
+  /** URIs locais das fotos escolhidas — ver services/api/mock/demandas.mock.ts. */
+  fotos: string[];
 };
 
 export type DemandaHistoricoEvento = {
@@ -51,4 +53,5 @@ export type DemandaDetalhe = DemandaResumo & {
   setorResponsavel?: string;
   historico: DemandaHistoricoEvento[];
   avaliacao?: Avaliacao;
+  fotos: string[];
 };

@@ -20,6 +20,7 @@ const mockDemandasPorUsuario: Record<string, DemandaDetalhe[]> = {
       atualizadaEm: '2026-09-10T09:30:00.000Z',
       localizacao: { endereco: 'Rua das Flores, 120 - Centro' },
       setorResponsavel: 'Secretaria de Serviços Públicos',
+      fotos: [],
       historico: [
         {
           id: 'dem_1_ev_1',
@@ -52,6 +53,7 @@ const mockDemandasPorUsuario: Record<string, DemandaDetalhe[]> = {
       atualizadaEm: '2026-08-22T15:45:00.000Z',
       localizacao: { endereco: 'Av. Central, 450' },
       setorResponsavel: 'Secretaria de Obras',
+      fotos: [],
       historico: [
         {
           id: 'dem_2_ev_1',
@@ -78,6 +80,7 @@ const mockDemandasPorUsuario: Record<string, DemandaDetalhe[]> = {
       atualizadaEm: '2026-06-10T17:20:00.000Z',
       localizacao: { endereco: 'Rua Sete de Setembro, 88 - Centro' },
       setorResponsavel: 'Secretaria de Meio Ambiente',
+      fotos: [],
       historico: [
         {
           id: 'dem_3_ev_1',
@@ -114,6 +117,7 @@ function toResumo(demanda: DemandaDetalhe): DemandaResumo {
     setorResponsavel: _setor,
     historico: _historico,
     avaliacao: _avaliacao,
+    fotos: _fotos,
     ...resumo
   } = demanda;
   return resumo;
@@ -155,6 +159,7 @@ export async function mockCriarDemanda(
     atualizadaEm: agora,
     descricao: payload.descricao,
     localizacao: payload.localizacao,
+    fotos: payload.fotos,
     historico: [
       {
         id: `dem_${Date.now()}_ev_1`,

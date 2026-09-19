@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CategoriaSelect } from '@/components/forms/categoria-select';
 import { LocationField } from '@/components/forms/location-field';
+import { PhotoPicker } from '@/components/forms/photo-picker';
 import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -32,6 +33,7 @@ export default function NovaDemandaScreen() {
       assunto: '',
       descricao: '',
       localizacao: { endereco: '' },
+      fotos: [],
     },
   });
   const criarDemanda = useCriarDemanda();
@@ -138,6 +140,18 @@ export default function NovaDemandaScreen() {
                 value={field.value}
                 onChange={field.onChange}
                 errorMessage={errors.localizacao?.endereco?.message}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="fotos"
+            render={({ field }) => (
+              <PhotoPicker
+                value={field.value}
+                onChange={field.onChange}
+                errorMessage={errors.fotos?.message}
               />
             )}
           />

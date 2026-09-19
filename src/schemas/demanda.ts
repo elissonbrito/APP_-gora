@@ -12,6 +12,7 @@ export const novaDemandaSchema = z.object({
     latitude: z.number().optional(),
     longitude: z.number().optional(),
   }),
+  fotos: z.array(z.string()).max(5, 'Você pode anexar no máximo 5 fotos.'),
 });
 
 export type NovaDemandaFormValues = z.infer<typeof novaDemandaSchema>;
