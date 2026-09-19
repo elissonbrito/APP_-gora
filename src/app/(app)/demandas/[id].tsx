@@ -1,4 +1,5 @@
 import * as Clipboard from 'expo-clipboard';
+import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Share, StyleSheet, View } from 'react-native';
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { StatusTimeline } from '@/components/timeline/status-timeline';
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 import { demandaCategoriaLabel } from '@/features/demandas/categoria';
 import { useDemanda } from '@/features/demandas/hooks';
 import { demandaStatusLabel, demandaStatusTone } from '@/features/demandas/status';
@@ -105,6 +106,19 @@ export default function DemandaDetalheScreen() {
               <ThemedText type="default">{demanda.descricao}</ThemedText>
             </View>
 
+            {demanda.fotos.length > 0 ? (
+              <View style={styles.section}>
+                <ThemedText type="smallBold">Fotos</ThemedText>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={styles.photosRow}>
+                    {demanda.fotos.map((uri) => (
+                      <Image key={uri} source={{ uri }} style={styles.photo} contentFit="cover" />
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            ) : null}
+
             <View style={styles.section}>
               <ThemedText type="smallBold" style={styles.sectionTitle}>
                 Acompanhamento
@@ -164,6 +178,15 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: Spacing.two,
+  },
+  photosRow: {
+    flexDirection: 'row',
+    gap: Spacing.two,
+  },
+  photo: {
+    width: 96,
+    height: 96,
+    borderRadius: Radius.medium,
   },
   sectionTitle: {
     marginBottom: Spacing.one,
