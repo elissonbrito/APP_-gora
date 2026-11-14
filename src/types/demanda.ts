@@ -27,6 +27,8 @@ export type DemandaResumo = {
 
 export type DemandaLocalizacao = {
   endereco: string;
+  /** CEP no formato 00000-000, quando o endereço foi preenchido pelo ViaCEP. */
+  cep?: string;
   latitude?: number;
   longitude?: number;
 };

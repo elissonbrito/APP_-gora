@@ -9,6 +9,7 @@ export const novaDemandaSchema = z.object({
   descricao: z.string().min(20, 'Descreva a ocorrência com pelo menos 20 caracteres.'),
   localizacao: z.object({
     endereco: z.string().min(5, 'Informe o endereço da ocorrência.'),
+    cep: z.string().optional(),
     latitude: z.number().optional(),
     longitude: z.number().optional(),
   }),
