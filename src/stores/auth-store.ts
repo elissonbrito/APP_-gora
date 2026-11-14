@@ -53,7 +53,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   async restoreSession() {
-    const stored = await secureStorage.getItem<StoredSession>(SESSION_STORAGE_KEY);
+    let stored: StoredSession | null = null;
+    try {
+      stored = await secureStorage.getItem<StoredSession>(SESSION_STORAGE_KEY);
+    } catch {
+      // Falha ao ler o armazenamento não pode travar o app na splash:
+      // trata como "sem sessão" e leva o cidadão ao login.
+    }
     if (!stored) {
       set({ status: 'signed-out' });
       return;
