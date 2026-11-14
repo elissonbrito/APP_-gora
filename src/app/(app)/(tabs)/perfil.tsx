@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { ListItem } from '@/components/ui/list-item';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useAtualizarPerfil } from '@/features/auth/hooks';
 import { atualizarPerfilSchema, type AtualizarPerfilFormValues } from '@/schemas/auth';
@@ -23,6 +24,7 @@ export default function PerfilScreen() {
   const logout = useAuthStore((state) => state.logout);
   const notificacoesAtivadas = usePreferencesStore((state) => state.notificacoesAtivadas);
   const setNotificacoesAtivadas = usePreferencesStore((state) => state.setNotificacoesAtivadas);
+  const cidade = usePreferencesStore((state) => state.cidade);
   const theme = useTheme();
 
   const {
@@ -111,6 +113,16 @@ export default function PerfilScreen() {
               onPress={onSubmit}
               loading={atualizarPerfil.isPending}
               disabled={!isDirty}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText type="smallBold">Minha cidade</ThemedText>
+            <ListItem
+              title={cidade ? cidade.nome : 'Escolher minha cidade'}
+              subtitle={cidade ? 'Toque para trocar' : 'Dados oficiais do IBGE'}
+              trailing={cidade?.uf ?? '›'}
+              onPress={() => router.push('/localidades')}
             />
           </View>
 
