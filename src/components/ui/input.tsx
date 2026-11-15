@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentRef } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -11,7 +11,7 @@ export type InputProps = TextInputProps & {
   helperText?: string;
 };
 
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const Input = forwardRef<ComponentRef<typeof TextInput>, InputProps>(function Input(
   { label, errorMessage, helperText, style, ...rest },
   ref,
 ) {

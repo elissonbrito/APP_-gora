@@ -93,7 +93,7 @@ export default function AlterarSenhaScreen() {
             </ThemedText>
           ) : null}
 
-          <Button label="Salvar nova senha" onPress={onSubmit} loading={alterarSenha.isPending} />
+          <Button label="Salvar nova senha" onPress={() => onSubmit()} loading={alterarSenha.isPending} />
         </KeyboardAwareScroll>
       </SafeAreaView>
     </ThemedView>

@@ -93,7 +93,7 @@ export default function LoginScreen() {
               </ThemedText>
             ) : null}
 
-            <Button label="Entrar" onPress={onSubmit} loading={login.isPending} />
+            <Button label="Entrar" onPress={() => onSubmit()} loading={login.isPending} />
 
             <Link href="/recuperar-senha">
               <ThemedText type="link" themeColor="primary">

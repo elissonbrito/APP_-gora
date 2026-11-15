@@ -40,7 +40,9 @@ export default function AppTabs() {
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+export function TabButton({ children, isFocused, ref: _ref, ...props }: TabTriggerSlotProps) {
+  // RN 0.88: o `ref` do TabTrigger é tipado para outro elemento e não serve ao
+  // Pressable; a navegação usa só onPress/href, então ele é descartado.
   return (
     <Pressable
       {...props}

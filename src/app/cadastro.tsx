@@ -134,7 +134,7 @@ export default function CadastroScreen() {
               </ThemedText>
             ) : null}
 
-            <Button label="Criar conta" onPress={onSubmit} loading={register.isPending} />
+            <Button label="Criar conta" onPress={() => onSubmit()} loading={register.isPending} />
           </ThemedView>
 
           <Link href="/login" style={styles.footerLink}>

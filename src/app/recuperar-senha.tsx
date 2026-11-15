@@ -70,7 +70,7 @@ export default function RecuperarSenhaScreen() {
 
               <Button
                 label="Enviar instruções"
-                onPress={onSubmit}
+                onPress={() => onSubmit()}
                 loading={requestPasswordReset.isPending}
               />
             </ThemedView>
