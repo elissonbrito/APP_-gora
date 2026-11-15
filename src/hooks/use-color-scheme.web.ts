@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import { useColorScheme as useRNColorScheme } from 'react-native';
 
+import { usePreferencesStore } from '@/stores/preferences-store';
+
 const emptySubscribe = () => () => {};
 
 /**
@@ -9,7 +11,7 @@ const emptySubscribe = () => () => {};
  * "cascading renders" e é a forma recomendada de expor um valor que só existe
  * após a hidratação no cliente.
  */
-export function useColorScheme() {
+export function useColorScheme(): 'light' | 'dark' {
   const hasHydrated = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -17,9 +19,12 @@ export function useColorScheme() {
   );
 
   const colorScheme = useRNColorScheme();
+  const tema = usePreferencesStore((state) => state.tema);
 
   if (hasHydrated) {
-    return colorScheme;
+    if (tema === 'claro') return 'light';
+    if (tema === 'escuro') return 'dark';
+    return colorScheme ?? 'light';
   }
 
   return 'light';
