@@ -1,4 +1,11 @@
-import { ActivityIndicator, Pressable, StyleSheet, type PressableProps } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  type PressableProps,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Spacing } from '@/constants/theme';
@@ -19,8 +26,14 @@ export function Button({
   loading = false,
   fullWidth = true,
   disabled,
-  ...rest
+  ...props
 }: ButtonProps) {
+  // <Link asChild> injeta a própria prop `style` (na web, por exemplo). Se ela
+  // fosse espalhada por último, substituiria o estilo do botão inteiro — fundo
+  // e cor somem. Por isso ela é separada e aplicada junto, por cima do nosso.
+  const { style: estiloExterno, ...rest } = props as typeof props & {
+    style?: StyleProp<ViewStyle>;
+  };
   const theme = useTheme();
   const isDisabled = disabled || loading;
 
@@ -49,6 +62,7 @@ export function Button({
         fullWidth && styles.fullWidth,
         isDisabled && styles.disabled,
         pressed && !isDisabled && styles.pressed,
+        estiloExterno,
       ]}
       {...rest}>
       {loading ? (
