@@ -30,7 +30,10 @@ export function LocationField({ value, onChange, errorMessage }: LocationFieldPr
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
-  const [cep, setCep] = useState(value.cep ?? '');
+  // null = o cidadão ainda não digitou; mostra o CEP que veio do formulário
+  // (por exemplo, de um rascunho reaberto).
+  const [cepDigitado, setCep] = useState<string | null>(null);
+  const cep = cepDigitado ?? value.cep ?? '';
 
   const consultaCep = useEnderecoPorCep(cep);
   const enderecoDoCep = consultaCep.data;
