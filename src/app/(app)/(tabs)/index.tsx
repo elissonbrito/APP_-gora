@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ListItem } from '@/components/ui/list-item';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useMinhasDemandas } from '@/features/demandas/hooks';
 import { useAuthStore } from '@/stores/auth-store';
@@ -96,6 +97,13 @@ export default function HomeScreen() {
               ))}
             </View>
           )}
+
+          <ListItem
+            title="Precisa de ajuda?"
+            subtitle="Perguntas frequentes sobre demandas e protocolos"
+            trailing="›"
+            onPress={() => router.push('/ajuda')}
+          />
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
