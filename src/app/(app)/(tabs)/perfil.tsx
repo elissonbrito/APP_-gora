@@ -19,12 +19,15 @@ import { useAuthStore } from '@/stores/auth-store';
 import { usePreferencesStore } from '@/stores/preferences-store';
 import { useTheme } from '@/hooks/use-theme';
 
+const rotuloTema = { sistema: 'Igual ao aparelho', claro: 'Claro', escuro: 'Escuro' } as const;
+
 export default function PerfilScreen() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const notificacoesAtivadas = usePreferencesStore((state) => state.notificacoesAtivadas);
   const setNotificacoesAtivadas = usePreferencesStore((state) => state.setNotificacoesAtivadas);
   const cidade = usePreferencesStore((state) => state.cidade);
+  const tema = usePreferencesStore((state) => state.tema);
   const theme = useTheme();
 
   const {
@@ -110,7 +113,7 @@ export default function PerfilScreen() {
 
             <Button
               label="Salvar alterações"
-              onPress={onSubmit}
+              onPress={() => onSubmit()}
               loading={atualizarPerfil.isPending}
               disabled={!isDirty}
             />
@@ -138,6 +141,16 @@ export default function PerfilScreen() {
                 trackColor={{ true: theme.primary }}
               />
             </Card>
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText type="smallBold">Aparência</ThemedText>
+            <ListItem
+              title="Tema do aplicativo"
+              subtitle={rotuloTema[tema]}
+              trailing="›"
+              onPress={() => router.push('/perfil/aparencia')}
+            />
           </View>
 
           <View style={styles.section}>
