@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -9,10 +9,13 @@ import { Skeleton } from '@/components/loading/skeleton';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Chip } from '@/components/ui/chip';
+import { Input } from '@/components/ui/input';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useMinhasDemandas } from '@/features/demandas/hooks';
 import { demandaStatusLabel } from '@/features/demandas/status';
+import { useTheme } from '@/hooks/use-theme';
 import type { DemandaStatus } from '@/types/demanda';
+import { correspondeBusca } from '@/utils/texto';
 
 type FiltroStatus = 'todas' | DemandaStatus;
 
@@ -26,11 +29,16 @@ const filtros: { value: FiltroStatus; label: string }[] = [
 
 export default function DemandasScreen() {
   const [filtro, setFiltro] = useState<FiltroStatus>('todas');
-  const { data: demandas, isLoading, isError, refetch } = useMinhasDemandas();
+  const [busca, setBusca] = useState('');
+  const { data: demandas, isLoading, isError, isRefetching, refetch } = useMinhasDemandas();
+  const theme = useTheme();
 
   const demandasFiltradas = (demandas ?? []).filter(
-    (demanda) => filtro === 'todas' || demanda.status === filtro,
+    (demanda) =>
+      (filtro === 'todas' || demanda.status === filtro) &&
+      correspondeBusca(busca, [demanda.protocolo, demanda.assunto]),
   );
+  const buscando = busca.trim().length > 0;
 
   return (
     <ThemedView style={styles.container}>
@@ -39,6 +47,16 @@ export default function DemandasScreen() {
           <ThemedText type="title" style={styles.title}>
             Demandas
           </ThemedText>
+
+          <Input
+            label="Buscar"
+            placeholder="Protocolo ou assunto"
+            value={busca}
+            onChangeText={setBusca}
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+          />
 
           <View style={styles.chips}>
             {filtros.map((item) => (
@@ -67,9 +85,11 @@ export default function DemandasScreen() {
           <EmptyState
             title="Nenhuma solicitação encontrada"
             description={
-              filtro === 'todas'
-                ? 'Você ainda não possui solicitações.'
-                : 'Não há demandas com este status.'
+              buscando
+                ? `Nada encontrado para "${busca.trim()}".`
+                : filtro === 'todas'
+                  ? 'Você ainda não possui solicitações.'
+                  : 'Não há demandas com este status.'
             }
           />
         ) : (
@@ -78,6 +98,17 @@ export default function DemandasScreen() {
             keyExtractor={(demanda) => demanda.id}
             renderItem={({ item }) => <DemandaCard demanda={item} />}
             contentContainerStyle={styles.list}
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={() => {
+                  refetch();
+                }}
+                tintColor={theme.primary}
+                colors={[theme.primary]}
+              />
+            }
           />
         )}
       </SafeAreaView>
