@@ -52,7 +52,7 @@ export default function AparenciaScreen() {
           <Card>
             <View style={styles.previewHeader}>
               <ThemedText type="smallBold" themeColor="textSecondary">
-                AGO-2026-000123
+                AG-2026-000123
               </ThemedText>
               <Badge label="Em andamento" tone="info" />
             </View>
