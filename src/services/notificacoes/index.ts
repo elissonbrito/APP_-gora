@@ -3,6 +3,7 @@ import { apiClient } from '@/services/api/client';
 import {
   mockListarNotificacoes,
   mockMarcarNotificacaoComoLida,
+  mockMarcarTodasComoLidas,
 } from '@/services/api/mock/notificacoes.mock';
 import type { Notificacao } from '@/types/notificacao';
 
@@ -15,4 +16,9 @@ export async function listarNotificacoes(userId: string): Promise<Notificacao[]>
 export async function marcarNotificacaoComoLida(userId: string, id: string): Promise<void> {
   if (env.apiMode === 'mock') return mockMarcarNotificacaoComoLida(userId, id);
   await apiClient.post(`/notificacoes/${id}/lida`);
+}
+
+export async function marcarTodasComoLidas(userId: string): Promise<void> {
+  if (env.apiMode === 'mock') return mockMarcarTodasComoLidas(userId);
+  await apiClient.post('/notificacoes/lidas');
 }

@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { listarNotificacoes, marcarNotificacaoComoLida } from '@/services/notificacoes';
+import {
+  listarNotificacoes,
+  marcarNotificacaoComoLida,
+  marcarTodasComoLidas,
+} from '@/services/notificacoes';
 import { notificacoesKeys } from '@/services/notificacoes/queryKeys';
 import { useAuthStore } from '@/stores/auth-store';
 import type { Notificacao } from '@/types/notificacao';
@@ -25,6 +29,21 @@ export function useMarcarNotificacaoComoLida() {
       if (!userId) return;
       queryClient.setQueryData<Notificacao[]>(notificacoesKeys.minhas(userId), (atual) =>
         atual?.map((item) => (item.id === id ? { ...item, lida: true } : item)),
+      );
+    },
+  });
+}
+
+export function useMarcarTodasComoLidas() {
+  const userId = useAuthStore((state) => state.user?.id);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => marcarTodasComoLidas(userId as string),
+    onSuccess: () => {
+      if (!userId) return;
+      queryClient.setQueryData<Notificacao[]>(notificacoesKeys.minhas(userId), (atual) =>
+        atual?.map((item) => ({ ...item, lida: true })),
       );
     },
   });

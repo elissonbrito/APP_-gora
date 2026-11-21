@@ -47,3 +47,10 @@ export async function mockMarcarNotificacaoComoLida(userId: string, id: string):
   }
   return mockDelay(undefined, 200);
 }
+
+export async function mockMarcarTodasComoLidas(userId: string): Promise<void> {
+  for (const notificacao of mockNotificacoesPorUsuario[userId] ?? []) {
+    notificacao.lida = true;
+  }
+  return mockDelay(undefined, 200);
+}
