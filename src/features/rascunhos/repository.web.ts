@@ -52,4 +52,8 @@ export const rascunhosRepository = {
   async remover(id: number): Promise<void> {
     await gravarTodos((await lerTodos()).filter((r) => r.id !== id));
   },
+
+  async limparTudo(): Promise<void> {
+    await AsyncStorage.removeItem(CHAVE);
+  },
 };

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { limparDadosDoUsuario } from '@/lib/limpar-dados-usuario';
 import { secureStorage } from '@/lib/secure-storage';
 import * as authService from '@/services/auth';
 import { registerSessionHandlers } from '@/services/api/session';
@@ -50,6 +51,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       // "presa" mesmo tocando em Sair.
     }
     set({ user: null, tokens: null, status: 'signed-out' });
+    // Depois de trocar para o login (as telas logadas já saíram), apaga os
+    // dados do usuário que estavam no aparelho.
+    await limparDadosDoUsuario();
   },
 
   async restoreSession() {

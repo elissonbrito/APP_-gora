@@ -27,7 +27,7 @@ const PERGUNTAS = [
   {
     pergunta: 'Fiquei sem internet no meio do formulário. Perco tudo?',
     resposta:
-      'Não. Toque em “Salvar rascunho”: ele fica guardado no próprio celular e aparece em “Meus rascunhos”, na tela Nova, para você terminar depois.',
+      'Não. Toque em “Salvar rascunho”: ele fica guardado no próprio celular e aparece em “Meus rascunhos”, na tela Nova, para você terminar depois. Por privacidade, os rascunhos são apagados quando você sai da conta.',
   },
   {
     pergunta: 'Para que serve escolher minha cidade?',

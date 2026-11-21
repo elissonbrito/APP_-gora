@@ -57,4 +57,10 @@ export const rascunhosRepository = {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM rascunhos WHERE id = ?', [id]);
   },
+
+  /** Apaga todos os rascunhos (usado ao sair da conta). */
+  async limparTudo(): Promise<void> {
+    const db = await getDatabase();
+    await db.runAsync('DELETE FROM rascunhos');
+  },
 };
