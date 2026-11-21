@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { create } from 'axios';
 
 /**
  * Cria um cliente HTTP para APIs públicas de terceiros (ViaCEP, IBGE...).
@@ -6,7 +6,7 @@ import axios from 'axios';
  * não conhecem o ÁGORA e nunca devem receber o token do cidadão.
  */
 export function createPublicClient(baseURL: string) {
-  return axios.create({
+  return create({
     baseURL,
     timeout: 10000,
     headers: { Accept: 'application/json' },

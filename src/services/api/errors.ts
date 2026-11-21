@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 
 export type AppErrorKind =
   | 'network'
@@ -41,7 +41,7 @@ export function toAppError(error: unknown): AppError {
     return error;
   }
 
-  if (axios.isAxiosError(error)) {
+  if (isAxiosError(error)) {
     if (error.code === 'ECONNABORTED') {
       return new AppError('timeout');
     }
