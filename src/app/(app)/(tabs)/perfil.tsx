@@ -160,6 +160,22 @@ export default function PerfilScreen() {
             </Link>
           </View>
 
+          <View style={styles.section}>
+            <ThemedText type="smallBold">Mais</ThemedText>
+            <ListItem
+              title="Meus rascunhos"
+              subtitle="Demandas salvas para terminar depois"
+              trailing="›"
+              onPress={() => router.push('/rascunhos')}
+            />
+            <ListItem
+              title="Ajuda e perguntas frequentes"
+              subtitle="Protocolos, status e privacidade"
+              trailing="›"
+              onPress={() => router.push('/ajuda')}
+            />
+          </View>
+
           <Button label="Sair da conta" variant="ghost" onPress={() => logout()} />
         </KeyboardAwareScroll>
       </SafeAreaView>
