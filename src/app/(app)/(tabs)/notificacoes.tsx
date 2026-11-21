@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { NotificacaoCard } from '@/components/cards/notificacao-card';
@@ -9,12 +9,20 @@ import { Skeleton } from '@/components/loading/skeleton';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useMarcarNotificacaoComoLida, useNotificacoes } from '@/features/notificacoes/hooks';
+import {
+  useMarcarNotificacaoComoLida,
+  useMarcarTodasComoLidas,
+  useNotificacoes,
+} from '@/features/notificacoes/hooks';
+import { useTheme } from '@/hooks/use-theme';
 import type { Notificacao } from '@/types/notificacao';
 
 export default function NotificacoesScreen() {
-  const { data: notificacoes, isLoading, isError, refetch } = useNotificacoes();
+  const { data: notificacoes, isLoading, isError, isRefetching, refetch } = useNotificacoes();
   const marcarComoLida = useMarcarNotificacaoComoLida();
+  const marcarTodas = useMarcarTodasComoLidas();
+  const theme = useTheme();
+  const naoLidas = notificacoes?.filter((notificacao) => !notificacao.lida).length ?? 0;
 
   function handlePress(notificacao: Notificacao) {
     if (!notificacao.lida) {
@@ -28,9 +36,22 @@ export default function NotificacoesScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedText type="title" style={styles.title}>
-          Notificações
-        </ThemedText>
+        <View style={styles.cabecalho}>
+          <ThemedText type="title" style={styles.title}>
+            Notificações
+          </ThemedText>
+          {naoLidas > 0 ? (
+            <Pressable
+              onPress={() => marcarTodas.mutate()}
+              disabled={marcarTodas.isPending}
+              accessibilityRole="button"
+              hitSlop={8}>
+              <ThemedText type="smallBold" themeColor="primary">
+                Marcar todas como lidas
+              </ThemedText>
+            </Pressable>
+          ) : null}
+        </View>
 
         {isLoading ? (
           <View style={styles.list}>
@@ -55,6 +76,16 @@ export default function NotificacoesScreen() {
               <NotificacaoCard notificacao={item} onPress={() => handlePress(item)} />
             )}
             contentContainerStyle={styles.list}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={() => {
+                  refetch();
+                }}
+                tintColor={theme.primary}
+                colors={[theme.primary]}
+              />
+            }
           />
         )}
       </SafeAreaView>
@@ -75,6 +106,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     maxWidth: MaxContentWidth,
+  },
+  cabecalho: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
   },
   title: {
     fontSize: 32,
