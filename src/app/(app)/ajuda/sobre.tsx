@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { Image } from 'expo-image';
 import { Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -32,6 +33,11 @@ export default function SobreScreen() {
       <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.marca}>
+            <Image
+              source={require('@/assets/images/agora-marca.png')}
+              style={styles.simbolo}
+              accessibilityIgnoresInvertColors
+            />
             <ThemedText type="title" themeColor="primary" style={styles.logo}>
               ÁGORA
             </ThemedText>
@@ -97,6 +103,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
     paddingVertical: Spacing.three,
+  },
+  simbolo: {
+    width: 88,
+    height: 88,
   },
   logo: {
     fontSize: 44,
