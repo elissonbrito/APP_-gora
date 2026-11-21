@@ -1,5 +1,5 @@
 import { Link, router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DemandaCard } from '@/components/cards/demanda-card';
@@ -13,6 +13,7 @@ import { Card } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useMinhasDemandas } from '@/features/demandas/hooks';
+import { useTheme } from '@/hooks/use-theme';
 import { useAuthStore } from '@/stores/auth-store';
 
 const STATUS_ATIVOS = new Set(['recebida', 'em_analise', 'em_andamento']);
@@ -20,7 +21,8 @@ const STATUS_ATIVOS = new Set(['recebida', 'em_analise', 'em_andamento']);
 export default function HomeScreen() {
   const nomeCompleto = useAuthStore((state) => state.user?.nome) ?? '';
   const primeiroNome = nomeCompleto.split(' ')[0];
-  const { data: demandas, isLoading, isError, refetch } = useMinhasDemandas();
+  const { data: demandas, isLoading, isError, isRefetching, refetch } = useMinhasDemandas();
+  const theme = useTheme();
 
   const emAndamento = demandas?.filter((demanda) => STATUS_ATIVOS.has(demanda.status)).length ?? 0;
   const concluidas = demandas?.filter((demanda) => demanda.status === 'concluida').length ?? 0;
@@ -31,7 +33,18 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={() => {
+                refetch();
+              }}
+              tintColor={theme.primary}
+              colors={[theme.primary]}
+            />
+          }>
           <ThemedView style={styles.header}>
             <ThemedText type="title" style={styles.title}>
               Olá, {primeiroNome || 'cidadão'}
