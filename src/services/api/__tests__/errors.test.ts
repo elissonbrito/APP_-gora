@@ -61,3 +61,28 @@ describe('toAppError', () => {
     expect(toAppError(new Error('algo aleatório')).kind).toBe('unknown');
   });
 });
+
+describe('toAppError com resposta do backend do ÁGORA', () => {
+  function comMensagem(status: number, mensagem: unknown): AxiosError {
+    const error = new AxiosError('erro de teste');
+    error.response = { status, data: { mensagem }, statusText: '', headers: {}, config: {} as never };
+    return error;
+  }
+
+  test('usa a mensagem em português enviada pelo servidor', () => {
+    const erro = toAppError(comMensagem(401, 'E-mail ou senha inválidos.'));
+    expect(erro.kind).toBe('auth');
+    expect(erro.message).toBe('E-mail ou senha inválidos.');
+  });
+
+  test('ignora mensagem que não seja texto', () => {
+    expect(toAppError(comMensagem(422, { campo: 'x' })).message).toBe(
+      'Verifique os dados informados e tente novamente.',
+    );
+  });
+
+  test('nunca exibe o texto de um erro 500', () => {
+    const erro = toAppError(comMensagem(500, 'relation "demandas" does not exist'));
+    expect(erro.message).not.toContain('relation');
+  });
+});

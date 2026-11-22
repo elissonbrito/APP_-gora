@@ -50,12 +50,18 @@ export function toAppError(error: unknown): AppError {
     }
 
     const status = error.response.status;
-    if (status === 401) return new AppError('auth');
-    if (status === 403) return new AppError('forbidden');
-    if (status === 404) return new AppError('not_found');
-    if (status === 400 || status === 422) return new AppError('validation');
+    // O backend do ÁGORA responde { mensagem } já em português e pronta para o
+    // cidadão (ex.: "E-mail ou senha inválidos."); sem ela, usa a mensagem padrão.
+    const corpo = error.response.data as { mensagem?: unknown } | undefined;
+    const mensagem = typeof corpo?.mensagem === 'string' ? corpo.mensagem : undefined;
+
+    if (status === 401) return new AppError('auth', mensagem);
+    if (status === 403) return new AppError('forbidden', mensagem);
+    if (status === 404) return new AppError('not_found', mensagem);
+    if (status === 400 || status === 422) return new AppError('validation', mensagem);
+    // Erro 5xx nunca mostra o texto do servidor: pode conter detalhe técnico.
     if (status >= 500) return new AppError('server');
-    return new AppError('unknown');
+    return new AppError('unknown', mensagem);
   }
 
   return new AppError('unknown');

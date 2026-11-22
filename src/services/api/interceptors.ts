@@ -16,7 +16,9 @@ export function attachInterceptors(instance: AxiosInstance): void {
     (response) => response,
     (error) => {
       const appError = toAppError(error);
-      if (appError.kind === 'auth') {
+      // Só encerra a sessão se havia uma: um 401 no login (senha errada) não
+      // é "sessão expirada".
+      if (appError.kind === 'auth' && getAccessToken()) {
         notifySessionExpired();
       }
       return Promise.reject(appError);
