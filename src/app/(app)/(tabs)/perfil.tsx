@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PrivacidadeSection } from '@/components/conta/privacidade-section';
 import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -159,6 +160,8 @@ export default function PerfilScreen() {
               <Button label="Alterar senha" variant="secondary" />
             </Link>
           </View>
+
+          <PrivacidadeSection />
 
           <View style={styles.section}>
             <ThemedText type="smallBold">Mais</ThemedText>
