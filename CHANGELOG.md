@@ -3,6 +3,29 @@
 Todas as mudanças relevantes do app ÁGORA são registradas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] — 2026-11-22
+
+Revisão final de segurança (OWASP) e adequação à LGPD.
+
+### Adicionado
+- Termos de Uso e Política de Privacidade (LGPD), acessíveis com ou sem login, no Perfil, no Sobre e no cadastro.
+- Aceite obrigatório dos termos no cadastro, com a versão e a data registradas no banco.
+- Direitos do titular pelo app: "Baixar meus dados" (JSON) e "Excluir minha conta" com confirmação por senha (`GET /conta/dados` e `DELETE /conta`).
+- Limite de tentativas no login, no cadastro e na recuperação de senha (resposta 429).
+- Cabeçalhos de segurança na API e CORS restrito às origens configuradas (`CORS_ORIGINS`).
+- 9 testes automatizados de segurança e LGPD na API.
+
+### Alterado
+- Senha forte no cadastro e na troca de senha: 8+ caracteres, letras e números, sem senhas comuns.
+- `zod` do backend atualizado para a versão 4 (corrige vulnerabilidade de alta gravidade).
+- JWT com algoritmo fixo e segredo forte obrigatório para a API iniciar.
+- Logs de erro sem dados pessoais.
+
+### Corrigido
+- PostgreSQL do Docker ficava acessível por toda a rede Wi-Fi; agora só pelo próprio computador.
+- O tempo de resposta do login revelava se um e-mail tinha conta.
+- Requisição grande demais respondia erro 500 em vez de 413.
+
 ## [1.2.0] — 2026-11-22
 
 Backend próprio com PostgreSQL: o app deixa de depender do mock.
