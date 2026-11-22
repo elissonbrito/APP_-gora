@@ -66,6 +66,13 @@ export default function RootLayout() {
               <Stack.Screen name="cadastro" />
               <Stack.Screen name="recuperar-senha" />
             </Stack.Protected>
+
+            {/* Documentos legais (LGPD): liberados com ou sem login. Atenção:
+                quando a rota pedida está protegida, o Expo Router redireciona
+                para a tela liberada de nome MAIS CURTO. Por isso estes nomes
+                são longos — nunca podem ganhar de login e boas-vindas. */}
+            <Stack.Screen name="termos-de-uso" />
+            <Stack.Screen name="politica-de-privacidade" />
           </Stack>
         )}
       </ThemeProvider>
