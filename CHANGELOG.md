@@ -31,9 +31,11 @@ Versão de entrega do P2 da disciplina de Aplicativos Híbridos: consumo de API 
 - App ficava em branco na web porque o SecureStore não existe no navegador.
 - Botões dentro de `Link` perdiam fundo e cor na web.
 - Formato do protocolo na prévia da tela Aparência.
+- Protocolo gerado após o envio quebrava em duas linhas.
 
 ### Removido
 - Arquivos de exemplo do template do Expo (logo e ícone padrão).
+- Código sem uso: renovação de token (`refreshSession`) nunca chamada, tipo `AuthSession` e as dependências `@expo/ui` e `expo-device`.
 
 ## [1.0.0] — 2026-09-19
 
