@@ -3,6 +3,31 @@
 Todas as mudanças relevantes do app ÁGORA são registradas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.2.0] — 2026-11-22
+
+Backend próprio com PostgreSQL: o app deixa de depender do mock.
+
+### Adicionado
+- API REST em `backend/` (Node.js 24 + Express 5 + TypeScript) com **PostgreSQL 17** no Docker.
+- Esquema com migrações versionadas, dados iniciais e banco separado para testes.
+- Autenticação com senha criptografada (bcrypt) e token JWT; perfil, alteração de senha e cadastro gravados no banco.
+- Demandas com protocolo sequencial, linha do tempo, avaliação e notificação automática ao criar.
+- Script `npm run status` que simula a prefeitura avançando o status de uma demanda.
+- 10 testes de integração da API (`node:test`).
+- Configuração da API pelo `.env.local` (`EXPO_PUBLIC_API_MODE` e `EXPO_PUBLIC_API_URL`).
+
+### Alterado
+- Rascunhos passam a ficar no AsyncStorage em todas as plataformas (o SQLite foi removido).
+- O app exibe as mensagens de erro em português enviadas pelo servidor.
+- Correções de versão do Expo SDK 58 (`expo-router`, `expo-web-browser`, `jest-expo`).
+
+### Corrigido
+- Ao reabrir o app no modo HTTP, a sessão era encerrada porque `/auth/me` ia sem o token.
+- Senha errada no login era tratada como "sessão expirada".
+
+### Removido
+- Dependência `expo-sqlite` e a camada de banco local.
+
 ## [1.1.0] — 2026-11-21
 
 Versão de entrega do P2 da disciplina de Aplicativos Híbridos: consumo de API real, armazenamento local, novas telas e identidade visual própria.
