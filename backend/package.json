@@ -1,0 +1,37 @@
+{
+  "name": "agora-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API REST do ÁGORA (Node.js + Express + PostgreSQL)",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:migrate": "node --env-file=.env src/scripts/migrar.ts",
+    "db:seed": "node --env-file=.env src/scripts/popular.ts",
+    "dev": "node --env-file=.env --watch src/server.ts",
+    "start": "node --env-file=.env src/server.ts",
+    "status": "node --env-file=.env src/scripts/avancar-status.ts",
+    "test": "node --env-file=.env --test test/*.teste.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.23.1",
+    "typescript": "~6.0.3"
+  }
+}

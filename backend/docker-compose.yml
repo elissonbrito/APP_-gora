@@ -1,0 +1,24 @@
+# PostgreSQL do ÁGORA para desenvolvimento local.
+# Porta 5433 no computador para não conflitar com um Postgres já instalado na 5432.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: agora-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: agora
+      POSTGRES_PASSWORD: agora
+      POSTGRES_DB: agora
+    ports:
+      - '5433:5432'
+    volumes:
+      - agora-dados:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agora -d agora']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  agora-dados:
