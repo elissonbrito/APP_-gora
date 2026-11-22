@@ -26,7 +26,10 @@ after(async () => {
   await pool.end();
 });
 
-async function api(caminho: string, opcoes: { metodo?: string; token?: string; corpo?: unknown } = {}) {
+async function api(
+  caminho: string,
+  opcoes: { metodo?: string; token?: string; corpo?: unknown } = {},
+) {
   const resposta = await fetch(base + caminho, {
     method: opcoes.metodo ?? 'GET',
     headers: {
@@ -74,7 +77,12 @@ describe('autenticação', () => {
   });
 
   test('cadastro cria conta e recusa e-mail repetido', async () => {
-    const dados = { nome: 'Carlos Lima', email: 'carlos@exemplo.com', senha: 'segredo1' };
+    const dados = {
+      nome: 'Carlos Lima',
+      email: 'carlos@exemplo.com',
+      senha: 'Segredo2026',
+      aceitouTermos: true,
+    };
     const criado = await api('/auth/register', { metodo: 'POST', corpo: dados });
     assert.equal(criado.status, 201);
     assert.equal(criado.corpo.user.role, 'cidadao');
@@ -97,16 +105,16 @@ describe('autenticação', () => {
     const errada = await api('/auth/alterar-senha', {
       metodo: 'POST',
       token,
-      corpo: { senhaAtual: 'nao-e-essa', novaSenha: 'nova-senha' },
+      corpo: { senhaAtual: 'nao-e-essa', novaSenha: 'NovaSenha9' },
     });
     assert.equal(errada.status, 422);
     const certa = await api('/auth/alterar-senha', {
       metodo: 'POST',
       token,
-      corpo: { senhaAtual: '123456', novaSenha: 'nova-senha' },
+      corpo: { senhaAtual: '123456', novaSenha: 'NovaSenha9' },
     });
     assert.equal(certa.status, 204);
-    assert.ok(await entrar('gestor@agora.dev', 'nova-senha'));
+    assert.ok(await entrar('gestor@agora.dev', 'NovaSenha9'));
   });
 });
 
@@ -147,11 +155,18 @@ describe('demandas', () => {
 
   test('avalia só demanda concluída e uma única vez', async () => {
     const token = await entrar();
-    const lista = (await api('/demandas/minhas', { token })).corpo as { id: string; status: string }[];
+    const lista = (await api('/demandas/minhas', { token })).corpo as {
+      id: string;
+      status: string;
+    }[];
     const concluida = lista.find((d) => d.status === 'concluida')!;
     const aberta = lista.find((d) => d.status !== 'concluida')!;
 
-    const naoPode = await api(`/demandas/${aberta.id}/avaliacao`, { metodo: 'POST', token, corpo: { nota: 5 } });
+    const naoPode = await api(`/demandas/${aberta.id}/avaliacao`, {
+      metodo: 'POST',
+      token,
+      corpo: { nota: 5 },
+    });
     assert.equal(naoPode.status, 422);
 
     const ok = await api(`/demandas/${concluida.id}/avaliacao`, {
@@ -162,7 +177,11 @@ describe('demandas', () => {
     assert.equal(ok.status, 201);
     assert.equal(ok.corpo.nota, 4);
 
-    const denovo = await api(`/demandas/${concluida.id}/avaliacao`, { metodo: 'POST', token, corpo: { nota: 1 } });
+    const denovo = await api(`/demandas/${concluida.id}/avaliacao`, {
+      metodo: 'POST',
+      token,
+      corpo: { nota: 1 },
+    });
     assert.equal(denovo.corpo.mensagem, 'Esta demanda já foi avaliada.');
 
     const detalhe = await api(`/demandas/${concluida.id}`, { token });
@@ -176,7 +195,10 @@ describe('notificações', () => {
     const antes = (await api('/notificacoes', { token })).corpo as { id: string; lida: boolean }[];
     const naoLida = antes.find((n) => !n.lida)!;
 
-    assert.equal((await api(`/notificacoes/${naoLida.id}/lida`, { metodo: 'POST', token })).status, 204);
+    assert.equal(
+      (await api(`/notificacoes/${naoLida.id}/lida`, { metodo: 'POST', token })).status,
+      204,
+    );
     assert.equal((await api('/notificacoes/lidas', { metodo: 'POST', token })).status, 204);
 
     const depois = (await api('/notificacoes', { token })).corpo as { lida: boolean }[];
