@@ -38,6 +38,8 @@ export type RegisterPayload = {
   email: string;
   telefone?: string;
   senha: string;
+  /** Aceite dos Termos de Uso e da Política de Privacidade (LGPD). */
+  aceitouTermos: boolean;
 };
 
 export type AtualizarPerfilPayload = {

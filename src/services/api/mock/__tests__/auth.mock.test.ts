@@ -34,7 +34,8 @@ describe('mockRegister', () => {
     const { user } = await mockRegister({
       nome: 'Novo Usuário Teste',
       email: `teste-${Date.now()}@agora.dev`,
-      senha: '123456',
+      senha: 'Segura2026',
+      aceitouTermos: true,
     });
     expect(user.role).toBe('cidadao');
     expect(user.permissions).toContain('demandas:criar');
@@ -42,7 +43,23 @@ describe('mockRegister', () => {
 
   test('rejeita e-mail já cadastrado', async () => {
     await expect(
-      mockRegister({ nome: 'Duplicado', email: 'cidadao@agora.dev', senha: '123456' }),
+      mockRegister({
+        nome: 'Duplicado',
+        email: 'cidadao@agora.dev',
+        senha: 'Segura2026',
+        aceitouTermos: true,
+      }),
+    ).rejects.toMatchObject({ kind: 'validation' });
+  });
+
+  test('recusa cadastro sem o aceite dos termos (LGPD)', async () => {
+    await expect(
+      mockRegister({
+        nome: 'Sem Aceite',
+        email: `sem-aceite-${Date.now()}@agora.dev`,
+        senha: 'Segura2026',
+        aceitouTermos: false,
+      }),
     ).rejects.toMatchObject({ kind: 'validation' });
   });
 });

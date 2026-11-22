@@ -64,6 +64,7 @@ export default function AlterarSenhaScreen() {
               <Input
                 label="Nova senha"
                 secureTextEntry
+                helperText="Mínimo de 8 caracteres, com letras e números."
                 errorMessage={errors.novaSenha?.message}
                 value={field.value}
                 onChangeText={field.onChange}

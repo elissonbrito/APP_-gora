@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AceiteTermos } from '@/components/forms/aceite-termos';
 import { KeyboardAwareScroll } from '@/components/layout/keyboard-aware-scroll';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -22,7 +23,14 @@ export default function CadastroScreen() {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { nome: '', email: '', telefone: '', senha: '', confirmarSenha: '' },
+    defaultValues: {
+      nome: '',
+      email: '',
+      telefone: '',
+      senha: '',
+      confirmarSenha: '',
+      aceitouTermos: false,
+    },
   });
   const register = useRegister();
 
@@ -104,6 +112,7 @@ export default function CadastroScreen() {
                 <Input
                   label="Senha"
                   placeholder="Crie uma senha"
+                  helperText="Mínimo de 8 caracteres, com letras e números."
                   secureTextEntry
                   errorMessage={errors.senha?.message}
                   value={field.value}
@@ -124,6 +133,18 @@ export default function CadastroScreen() {
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="aceitouTermos"
+              render={({ field }) => (
+                <AceiteTermos
+                  value={field.value}
+                  onChange={field.onChange}
+                  errorMessage={errors.aceitouTermos?.message}
                 />
               )}
             />

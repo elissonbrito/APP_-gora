@@ -21,6 +21,7 @@ export function useRegister() {
         email: values.email,
         telefone: values.telefone,
         senha: values.senha,
+        aceitouTermos: values.aceitouTermos,
       }),
   });
 }

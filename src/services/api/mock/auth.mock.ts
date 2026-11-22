@@ -70,6 +70,12 @@ export async function mockLogin(
 export async function mockRegister(
   payload: RegisterPayload,
 ): Promise<{ user: User; tokens: AuthTokens }> {
+  if (!payload.aceitouTermos) {
+    throw new AppError(
+      'validation',
+      'É preciso aceitar os Termos de Uso e a Política de Privacidade.',
+    );
+  }
   if (mockUsers.some((candidate) => candidate.email === payload.email)) {
     throw new AppError('validation', 'Já existe uma conta cadastrada com este e-mail.');
   }
@@ -127,5 +133,24 @@ export async function mockAlterarSenha(
     throw new AppError('validation', 'Senha atual incorreta.');
   }
   record.senha = payload.novaSenha;
+  await mockDelay(undefined, 500);
+}
+
+/** Dados cadastrais do usuário, para a exportação (LGPD, art. 18). */
+export async function mockDadosCadastrais(userId: string): Promise<User> {
+  const record = mockUsers.find((candidate) => candidate.id === userId);
+  if (!record) {
+    throw new AppError('auth');
+  }
+  return toPublicUser(record);
+}
+
+/** Exclusão da conta a pedido do titular, confirmada com a senha. */
+export async function mockExcluirConta(userId: string, senha: string): Promise<void> {
+  const indice = mockUsers.findIndex((candidate) => candidate.id === userId);
+  if (indice === -1 || mockUsers[indice].senha !== senha) {
+    throw new AppError('validation', 'Senha incorreta.');
+  }
+  mockUsers.splice(indice, 1);
   await mockDelay(undefined, 500);
 }
