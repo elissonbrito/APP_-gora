@@ -1,5 +1,7 @@
 # PostgreSQL do ÁGORA para desenvolvimento local.
 # Porta 5433 no computador para não conflitar com um Postgres já instalado na 5432.
+# Publicada só em 127.0.0.1: o banco não fica acessível por outros aparelhos da
+# rede Wi-Fi (só a API, que roda neste computador, conversa com ele).
 services:
   postgres:
     image: postgres:17-alpine
@@ -10,7 +12,7 @@ services:
       POSTGRES_PASSWORD: agora
       POSTGRES_DB: agora
     ports:
-      - '5433:5432'
+      - '127.0.0.1:5433:5432'
     volumes:
       - agora-dados:/var/lib/postgresql/data
       - ./docker/initdb:/docker-entrypoint-initdb.d:ro
