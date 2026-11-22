@@ -1,66 +1,59 @@
-import { getDatabase } from '@/lib/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import type { Rascunho, RascunhoDados } from '@/types/rascunho';
 
-type Linha = { id: number; dados: string; atualizado_em: string };
+/**
+ * Rascunhos da Nova Demanda guardados no próprio aparelho (AsyncStorage), em
+ * uma lista JSON versionada. Funcionam sem internet e não vão para o servidor:
+ * são apagados ao sair da conta (ver lib/limpar-dados-usuario).
+ */
+const CHAVE = 'agora.v1.rascunhos';
 
-function paraRascunho(linha: Linha): Rascunho {
-  let dados: RascunhoDados = {};
+async function lerTodos(): Promise<Rascunho[]> {
   try {
-    dados = JSON.parse(linha.dados) as RascunhoDados;
+    const bruto = await AsyncStorage.getItem(CHAVE);
+    return bruto ? (JSON.parse(bruto) as Rascunho[]) : [];
   } catch {
-    // Registro corrompido: mostra vazio em vez de quebrar a lista inteira.
+    return [];
   }
-  return { id: linha.id, dados, atualizadoEm: linha.atualizado_em };
 }
 
-/** Rascunhos da Nova Demanda guardados em SQLite (celular). */
+async function gravarTodos(lista: Rascunho[]) {
+  await AsyncStorage.setItem(CHAVE, JSON.stringify(lista));
+}
+
 export const rascunhosRepository = {
   async listar(): Promise<Rascunho[]> {
-    const db = await getDatabase();
-    const linhas = await db.getAllAsync<Linha>(
-      'SELECT id, dados, atualizado_em FROM rascunhos ORDER BY atualizado_em DESC',
-    );
-    return linhas.map(paraRascunho);
+    const lista = await lerTodos();
+    return lista.sort((a, b) => b.atualizadoEm.localeCompare(a.atualizadoEm));
   },
 
   async obter(id: number): Promise<Rascunho | null> {
-    const db = await getDatabase();
-    const linha = await db.getFirstAsync<Linha>(
-      'SELECT id, dados, atualizado_em FROM rascunhos WHERE id = ?',
-      [id],
-    );
-    return linha ? paraRascunho(linha) : null;
+    return (await lerTodos()).find((r) => r.id === id) ?? null;
   },
 
-  /** Cria (sem id) ou atualiza (com id). Devolve o id salvo. */
   async salvar(dados: RascunhoDados, id?: number): Promise<number> {
-    const db = await getDatabase();
-    const agora = new Date().toISOString();
-    const json = JSON.stringify(dados);
+    const lista = await lerTodos();
+    const atualizadoEm = new Date().toISOString();
+    const existente = id != null ? lista.find((r) => r.id === id) : undefined;
 
-    if (id != null) {
-      const resultado = await db.runAsync(
-        'UPDATE rascunhos SET dados = ?, atualizado_em = ? WHERE id = ?',
-        [json, agora, id],
-      );
-      if (resultado.changes > 0) return id;
+    if (existente) {
+      existente.dados = dados;
+      existente.atualizadoEm = atualizadoEm;
+      await gravarTodos(lista);
+      return existente.id;
     }
 
-    const resultado = await db.runAsync(
-      'INSERT INTO rascunhos (dados, atualizado_em) VALUES (?, ?)',
-      [json, agora],
-    );
-    return resultado.lastInsertRowId;
+    const novoId = lista.reduce((maior, r) => Math.max(maior, r.id), 0) + 1;
+    await gravarTodos([...lista, { id: novoId, dados, atualizadoEm }]);
+    return novoId;
   },
 
   async remover(id: number): Promise<void> {
-    const db = await getDatabase();
-    await db.runAsync('DELETE FROM rascunhos WHERE id = ?', [id]);
+    await gravarTodos((await lerTodos()).filter((r) => r.id !== id));
   },
 
-  /** Apaga todos os rascunhos (usado ao sair da conta). */
   async limparTudo(): Promise<void> {
-    const db = await getDatabase();
-    await db.runAsync('DELETE FROM rascunhos');
+    await AsyncStorage.removeItem(CHAVE);
   },
 };

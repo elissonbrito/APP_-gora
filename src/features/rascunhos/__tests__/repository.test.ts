@@ -1,41 +1,14 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { rascunhosRepository } from '@/features/rascunhos/repository';
 
-/**
- * Banco SQLite falso em memória: guarda as linhas num array e responde às
- * mesmas consultas que o repositório faz.
- */
-jest.mock('@/lib/database', () => {
-  let linhas: { id: number; dados: string; atualizado_em: string }[] = [];
-  let proximoId = 1;
-  const db = {
-    getAllAsync: jest.fn(async () =>
-      [...linhas].sort((a, b) => b.atualizado_em.localeCompare(a.atualizado_em)),
-    ),
-    getFirstAsync: jest.fn(async (_sql: string, [id]: [number]) =>
-      linhas.find((l) => l.id === id) ?? null,
-    ),
-    runAsync: jest.fn(async (sql: string, params: (string | number)[]) => {
-      if (sql.startsWith('INSERT')) {
-        const id = proximoId++;
-        linhas.push({ id, dados: params[0] as string, atualizado_em: params[1] as string });
-        return { lastInsertRowId: id, changes: 1 };
-      }
-      if (sql.startsWith('UPDATE')) {
-        const linha = linhas.find((l) => l.id === params[2]);
-        if (!linha) return { lastInsertRowId: 0, changes: 0 };
-        linha.dados = params[0] as string;
-        linha.atualizado_em = params[1] as string;
-        return { lastInsertRowId: 0, changes: 1 };
-      }
-      const antes = linhas.length;
-      linhas = linhas.filter((l) => l.id !== params[0]);
-      return { lastInsertRowId: 0, changes: antes - linhas.length };
-    }),
-  };
-  return { getDatabase: async () => db };
-});
+jest.mock('@react-native-async-storage/async-storage', () =>
+  jest.requireActual('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+);
 
-describe('rascunhosRepository (SQLite)', () => {
+beforeEach(() => AsyncStorage.clear());
+
+describe('rascunhosRepository (AsyncStorage)', () => {
   test('salva, lista, atualiza e remove um rascunho', async () => {
     const id = await rascunhosRepository.salvar({ assunto: 'Poste apagado' });
     expect(await rascunhosRepository.obter(id)).toMatchObject({
@@ -55,5 +28,23 @@ describe('rascunhosRepository (SQLite)', () => {
     const id = await rascunhosRepository.salvar({ assunto: 'Buraco' }, 999);
     expect(id).not.toBe(999);
     expect(await rascunhosRepository.obter(id)).not.toBeNull();
+  });
+
+  test('lista do mais recente para o mais antigo', async () => {
+    const agora = jest.spyOn(Date.prototype, 'toISOString');
+    agora.mockReturnValueOnce('2026-11-20T10:00:00.000Z');
+    const antigo = await rascunhosRepository.salvar({ assunto: 'Antigo' });
+    agora.mockReturnValueOnce('2026-11-21T10:00:00.000Z');
+    const novo = await rascunhosRepository.salvar({ assunto: 'Novo' });
+    agora.mockRestore();
+
+    expect((await rascunhosRepository.listar()).map((r) => r.id)).toEqual([novo, antigo]);
+  });
+
+  test('limparTudo apaga todos os rascunhos', async () => {
+    await rascunhosRepository.salvar({ assunto: 'A' });
+    await rascunhosRepository.salvar({ assunto: 'B' });
+    await rascunhosRepository.limparTudo();
+    expect(await rascunhosRepository.listar()).toEqual([]);
   });
 });
