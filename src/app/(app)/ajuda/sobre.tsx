@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -75,10 +75,21 @@ export default function SobreScreen() {
             ))}
           </View>
 
-          <ThemedText type="small" themeColor="textSecondary" style={styles.centro}>
-            Seus dados de acesso ficam protegidos no cofre do aparelho (Keychain/Keystore).
-            Preferências e rascunhos ficam só neste celular.
-          </ThemedText>
+          <View style={styles.secao}>
+            <ThemedText type="smallBold">Privacidade (LGPD)</ThemedText>
+            <ListItem
+              title="Termos de Uso"
+              subtitle="Regras de uso do ÁGORA"
+              trailing="›"
+              onPress={() => router.push('/termos-de-uso')}
+            />
+            <ListItem
+              title="Política de Privacidade"
+              subtitle="Quais dados tratamos e seus direitos"
+              trailing="›"
+              onPress={() => router.push('/politica-de-privacidade')}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>

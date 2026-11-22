@@ -37,7 +37,7 @@ const PERGUNTAS = [
   {
     pergunta: 'Meus dados estão seguros?',
     resposta:
-      'Sua sessão fica no cofre criptografado do aparelho (Keychain no iPhone, Keystore no Android). Preferências e rascunhos ficam só no seu celular e são usados apenas para o funcionamento do app.',
+      'Sim. Sua senha é guardada criptografada, sua sessão fica no cofre do aparelho (Keychain no iPhone, Keystore no Android) e cada pessoa só acessa as próprias demandas. Em Perfil › Privacidade e dados você lê a Política de Privacidade, baixa uma cópia dos seus dados ou exclui sua conta, como garante a LGPD.',
   },
 ];
 
