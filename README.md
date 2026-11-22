@@ -115,12 +115,11 @@ Ao iniciar, a API mostra o endereço para usar no celular, por exemplo `http://1
 
 ```bash
 cp .env.example .env.local   # na primeira vez
-# edite .env.local: EXPO_PUBLIC_API_URL=http://<IP do computador>:3333
 npm install
 npx expo start               # escaneie o QR code com o Expo Go
 ```
 
-No celular, `localhost` é o próprio celular — por isso a URL usa o IP do computador na rede (Aula 9). Sem backend, use `EXPO_PUBLIC_API_MODE=mock` e o app roda com dados simulados.
+No celular, `localhost` é o próprio celular — a API precisa ser chamada pelo IP do computador na rede (Aula 9). Em desenvolvimento o app descobre esse IP sozinho (é o mesmo que o Expo usa para entregar o app), então mudar de Wi-Fi não exige editar nada. Para fixar outro endereço, defina `EXPO_PUBLIC_API_URL` no `.env.local`. Sem backend, use `EXPO_PUBLIC_API_MODE=mock` e o app roda com dados simulados.
 
 ### Usuários de teste
 
@@ -249,7 +248,7 @@ O app passou por uma revisão de segurança baseada no OWASP (Top 10 e API Secur
 
 O app escolhe de onde vêm os dados pelo `.env.local`:
 
-- `EXPO_PUBLIC_API_MODE=http` — usa o backend em `EXPO_PUBLIC_API_URL` (PostgreSQL).
+- `EXPO_PUBLIC_API_MODE=http` — usa o backend (PostgreSQL), no IP do computador detectado pelo Expo ou em `EXPO_PUBLIC_API_URL`, se definida.
 - `EXPO_PUBLIC_API_MODE=mock` — usa os dados simulados de `src/services/api/mock/`, sem precisar de backend.
 
 As APIs públicas (ViaCEP e IBGE) são sempre reais. Nenhuma tela muda entre os modos — só a configuração.

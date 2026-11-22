@@ -7,6 +7,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ### Corrigido
 - Quando o servidor não respondia, o app dizia "Sem conexão com a internet" mesmo com o celular conectado. Agora diferencia: sem internet, ou servidor do ÁGORA fora do ar (em desenvolvimento, mostra o endereço da API tentado).
+- Ao mudar de rede Wi-Fi, o IP do computador mudava e o app não achava mais a API. Em desenvolvimento, o app agora descobre o endereço sozinho pelo Expo; `EXPO_PUBLIC_API_URL` virou opcional.
+- Com a porta 3333 ocupada (API já aberta em outro terminal), o backend dizia "rodando" e encerrava em silêncio. Agora explica o problema e sai com erro.
 
 ### Adicionado
 - Atalhos `npm run api` e `npm run api:db` na raiz para subir o backend e o banco sem entrar na pasta `backend/`.
