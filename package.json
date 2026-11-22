@@ -54,6 +54,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "api": "npm --prefix backend run dev",
+    "api:db": "npm --prefix backend run db:up",
     "lint": "expo lint",
     "test": "jest"
   },
