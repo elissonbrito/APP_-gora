@@ -1,3 +1,4 @@
+import { onlineManager } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { AppError, toAppError } from '@/services/api/errors';
@@ -65,7 +66,13 @@ describe('toAppError', () => {
 describe('toAppError com resposta do backend do ÁGORA', () => {
   function comMensagem(status: number, mensagem: unknown): AxiosError {
     const error = new AxiosError('erro de teste');
-    error.response = { status, data: { mensagem }, statusText: '', headers: {}, config: {} as never };
+    error.response = {
+      status,
+      data: { mensagem },
+      statusText: '',
+      headers: {},
+      config: {} as never,
+    };
     return error;
   }
 
@@ -84,5 +91,25 @@ describe('toAppError com resposta do backend do ÁGORA', () => {
   test('nunca exibe o texto de um erro 500', () => {
     const erro = toAppError(comMensagem(500, 'relation "demandas" does not exist'));
     expect(erro.message).not.toContain('relation');
+  });
+});
+
+describe('toAppError sem resposta do servidor', () => {
+  afterEach(() => onlineManager.setOnline(true));
+
+  test('aparelho offline: "Sem conexão com a internet"', () => {
+    onlineManager.setOnline(false);
+    expect(toAppError(new AxiosError('Network Error')).message).toMatch(/Sem conexão/);
+  });
+
+  test('aparelho online: avisa que o servidor não respondeu, não que falta internet', () => {
+    onlineManager.setOnline(true);
+    const erro = new AxiosError('Network Error');
+    erro.config = { baseURL: 'http://192.168.0.101:3333', headers: {} as never };
+    const appError = toAppError(erro);
+    expect(appError.kind).toBe('network');
+    expect(appError.message).toMatch(/servidor do ÁGORA/);
+    expect(appError.message).toContain('http://192.168.0.101:3333');
+    expect(appError.message).not.toMatch(/Sem conexão/);
   });
 });

@@ -1,14 +1,8 @@
-import { isAxiosError } from 'axios';
+import { onlineManager } from '@tanstack/react-query';
+import { isAxiosError, type AxiosError } from 'axios';
 
 export type AppErrorKind =
-  | 'network'
-  | 'timeout'
-  | 'auth'
-  | 'forbidden'
-  | 'validation'
-  | 'not_found'
-  | 'server'
-  | 'unknown';
+  'network' | 'timeout' | 'auth' | 'forbidden' | 'validation' | 'not_found' | 'server' | 'unknown';
 
 const FRIENDLY_MESSAGES: Record<AppErrorKind, string> = {
   network: 'Sem conexão com a internet. Verifique sua rede e tente novamente.',
@@ -36,6 +30,20 @@ export class AppError extends Error {
   }
 }
 
+/**
+ * O aparelho tem internet, mas o servidor não respondeu (API desligada,
+ * endereço errado, outra rede Wi-Fi, firewall). Não é "sem internet": dizer
+ * isso faria o cidadão procurar o problema no lugar errado.
+ */
+function servidorInacessivel(error: AxiosError): AppError {
+  let mensagem = 'Não foi possível falar com o servidor do ÁGORA. Tente novamente em instantes.';
+  // Em desenvolvimento, mostra o endereço tentado para facilitar o diagnóstico.
+  if (__DEV__ && error.config?.baseURL) {
+    mensagem += ` (API: ${error.config.baseURL} — confira se o backend está rodando e se o celular está na mesma rede Wi-Fi.)`;
+  }
+  return new AppError('network', mensagem);
+}
+
 export function toAppError(error: unknown): AppError {
   if (error instanceof AppError) {
     return error;
@@ -46,7 +54,7 @@ export function toAppError(error: unknown): AppError {
       return new AppError('timeout');
     }
     if (!error.response) {
-      return new AppError('network');
+      return onlineManager.isOnline() ? servidorInacessivel(error) : new AppError('network');
     }
 
     const status = error.response.status;
