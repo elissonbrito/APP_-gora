@@ -18,7 +18,7 @@ export const naoEncontrado = (mensagem = 'Não encontramos o que você procura.'
   new ErroHttp(404, mensagem);
 
 /** Converte qualquer erro em resposta JSON { mensagem } sem vazar detalhes técnicos. */
-export const tratarErros: ErrorRequestHandler = (erro, _req, res, _next) => {
+export const tratarErros: ErrorRequestHandler = (erro, req, res, _next) => {
   if (erro instanceof ErroHttp) {
     res.status(erro.status).json({ mensagem: erro.message });
     return;
@@ -31,6 +31,17 @@ export const tratarErros: ErrorRequestHandler = (erro, _req, res, _next) => {
     res.status(400).json({ mensagem: 'Corpo da requisição inválido.' });
     return;
   }
-  console.error(erro);
+  if (erro?.type === 'entity.too.large') {
+    res.status(413).json({ mensagem: 'Os dados enviados são grandes demais.' });
+    return;
+  }
+  // Registra só o essencial: a mensagem técnica e a rota. Nunca o corpo da
+  // requisição, o token ou o objeto completo do erro do banco, que pode
+  // conter dados pessoais (e-mails, endereços) — LGPD.
+  const codigo = (erro as { code?: string })?.code;
+  console.error(
+    `[erro] ${req.method} ${req.path}${codigo ? ` (código ${codigo})` : ''}:`,
+    erro instanceof Error ? erro.message : 'erro desconhecido',
+  );
   res.status(500).json({ mensagem: 'Não foi possível concluir sua solicitação. Tente novamente em instantes.' });
 };

@@ -15,6 +15,14 @@ export const config = {
     ? obrigatoria('TEST_DATABASE_URL')
     : obrigatoria('DATABASE_URL'),
   jwtSecret: obrigatoria('JWT_SECRET'),
+  /**
+   * Origens web autorizadas no CORS (o app no celular não envia Origin e não
+   * é afetado). Lista separada por vírgula, ex.: http://localhost:8081
+   */
+  origensWeb: (process.env.CORS_ORIGINS ?? 'http://localhost:8081')
+    .split(',')
+    .map((origem) => origem.trim())
+    .filter(Boolean),
   /** Validade do token de acesso. Não há renovação automática no app. */
   jwtExpiracao: '7d',
 } as const;
