@@ -11,7 +11,8 @@ Registre, acompanhe e avalie as demandas da sua cidade — direto do celular.</p
   <img alt="Expo SDK 58" src="https://img.shields.io/badge/Expo-SDK%2058-000020?logo=expo" />
   <img alt="React Native 0.88" src="https://img.shields.io/badge/React%20Native-0.88-61DAFB?logo=react" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript" />
-  <img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-1.1.0-7A2E3D" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" />
+  <img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-1.2.0-7A2E3D" />
 </p>
 
 ---
@@ -23,7 +24,7 @@ Poste apagado, buraco na rua, lixo acumulado: o cidadão vê o problema, mas nã
 - **Registrar em poucos toques** — categoria, descrição, fotos e endereço pelo **CEP** (ViaCEP) ou pelo **GPS**.
 - **Acompanhar pelo protocolo** — linha do tempo de cada etapa, notificações e compartilhamento do protocolo.
 - **Avaliar o atendimento** — nota e comentário quando a demanda é concluída.
-- **Funcionar sem internet** — rascunhos guardados no aparelho (SQLite), listas em cache e aviso de offline.
+- **Funcionar sem internet** — rascunhos guardados no aparelho, listas em cache e aviso de offline.
 - **Respeitar a privacidade** — sessão no cofre do aparelho (Keychain/Keystore) e dados do usuário apagados ao sair da conta.
 
 ## Telas
@@ -42,7 +43,7 @@ Poste apagado, buraco na rua, lixo acumulado: o cidadão vê o problema, mas nã
     <td align="center"><img src="docs/screenshots/12-perfil.png" width="200" /><br/><sub>Perfil</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/07-rascunhos.png" width="200" /><br/><sub>Rascunhos (SQLite)</sub></td>
+    <td align="center"><img src="docs/screenshots/07-rascunhos.png" width="200" /><br/><sub>Rascunhos no aparelho</sub></td>
     <td align="center"><img src="docs/screenshots/08-rascunho-detalhe.png" width="200" /><br/><sub>Detalhe do rascunho</sub></td>
     <td align="center"><img src="docs/screenshots/13-estados.png" width="200" /><br/><sub>Estados (IBGE)</sub></td>
     <td align="center"><img src="docs/screenshots/14-municipios.png" width="200" /><br/><sub>Municípios com busca</sub></td>
@@ -77,21 +78,40 @@ São **19 telas** navegáveis: boas-vindas, login, cadastro, recuperar senha, Ho
 | **Tema claro/escuro** (Aula 7) | Paletas clara e escura em `theme.ts`; o cidadão escolhe na tela **Aparência** (claro, escuro ou igual ao aparelho). |
 | **Navegação com Expo Router** (Aula 8) | Rotas por arquivo em `src/app`, grupos `(app)` e `(tabs)`, rotas dinâmicas `[id]` e `[uf]`, Stack + Tabs, `router.push`/`replace`/`dismissTo`, rotas protegidas com `Stack.Protected` e tela `+not-found`. |
 | **Consumo de API** (Aula 9) | APIs públicas reais: **ViaCEP** (endereço pelo CEP) e **IBGE Localidades** (estados e municípios), com camada de serviço, tratamento de erros em português, os 4 estados de tela (carregando, erro, vazio, sucesso), `FlatList` e puxar para atualizar. |
-| **Armazenamento local** (Aula 10) | **SecureStore** para a sessão; **AsyncStorage** para tema, cidade, onboarding e cache com validade (TTL); **SQLite** (`expo-sqlite`) para os rascunhos, com migração por versão; NetInfo para o aviso de offline; limpeza dos dados do usuário no logout. |
+| **Armazenamento local** (Aula 10) | **SecureStore** para a sessão (token JWT); **AsyncStorage** para tema, cidade, onboarding, rascunhos e cache com validade (TTL); NetInfo para o aviso de offline; limpeza dos dados do usuário no logout. |
+| **Backend próprio** | API REST em Node.js + Express com **PostgreSQL** (pasta `backend/`): usuários com senha criptografada (bcrypt), login com JWT, demandas, linha do tempo, avaliações e notificações. |
 
 ## Como executar
 
-Pré-requisitos: **Node.js 22.13+ ou 24.3+**, npm e o app **Expo Go** (compatível com o SDK 58) no celular.
+Pré-requisitos: **Node.js 22.18+ ou 24+**, npm, **Docker** (para o PostgreSQL) e o app **Expo Go** (compatível com o SDK 58) no celular. O celular e o computador precisam estar na **mesma rede Wi-Fi**.
+
+### 1. Backend (API + PostgreSQL)
 
 ```bash
+cd backend
+cp .env.example .env     # na primeira vez; troque o JWT_SECRET
 npm install
-npx expo start      # escaneie o QR code com o Expo Go
-npm run web         # opcional: roda no navegador
+npm run db:up            # sobe o PostgreSQL no Docker (porta 5433)
+npm run db:seed          # cria as tabelas e os dados de exemplo
+npm run dev              # API em http://localhost:3333
 ```
+
+Ao iniciar, a API mostra o endereço para usar no celular, por exemplo `http://192.168.0.101:3333`.
+
+### 2. App
+
+```bash
+cp .env.example .env.local   # na primeira vez
+# edite .env.local: EXPO_PUBLIC_API_URL=http://<IP do computador>:3333
+npm install
+npx expo start               # escaneie o QR code com o Expo Go
+```
+
+No celular, `localhost` é o próprio celular — por isso a URL usa o IP do computador na rede (Aula 9). Sem backend, use `EXPO_PUBLIC_API_MODE=mock` e o app roda com dados simulados.
 
 ### Usuários de teste
 
-O backend do ÁGORA é simulado (veja [Modo de API](#modo-de-api)). Entre com:
+Criados pelo `npm run db:seed` (e também disponíveis no modo mock):
 
 | E-mail | Senha | Papel |
 |---|---|---|
@@ -99,14 +119,24 @@ O backend do ÁGORA é simulado (veja [Modo de API](#modo-de-api)). Entre com:
 | `colaborador@agora.dev` | `123456` | Colaborador |
 | `gestor@agora.dev` | `123456` | Gestor |
 
-O cadastro em `/cadastro` também funciona e cria um cidadão em memória.
+O cadastro em `/cadastro` cria um novo cidadão no banco.
+
+### Simulando a prefeitura
+
+O app é a visão do cidadão. Para ver uma demanda andar até "Concluída" (e poder avaliá-la), avance o status pelo protocolo — o cidadão recebe a notificação:
+
+```bash
+cd backend
+npm run status -- AG-2026-000124 "Equipe enviada ao local."
+```
 
 ### Testes e qualidade
 
 ```bash
-npm test         # 75 testes (Jest + Testing Library)
-npm run lint     # ESLint (config do Expo)
-npx tsc --noEmit # TypeScript em modo strict
+npm test                     # app: 80 testes (Jest + Testing Library)
+npm run lint                 # ESLint (config do Expo)
+npx tsc --noEmit             # TypeScript em modo strict
+cd backend && npm test       # API: 10 testes de integração no banco agora_test
 ```
 
 ## Como o projeto foi criado do zero
@@ -120,9 +150,10 @@ Passo a passo seguido no desenvolvimento, na ordem do histórico de commits:
 5. **Navegação e autenticação** — login, cadastro e recuperação de senha; grupo `(app)` protegido com `Stack.Protected`; abas `(tabs)`.
 6. **Fluxo do cidadão** — Home, Nova demanda (formulário com React Hook Form + Zod, GPS e fotos), Demandas com filtros, detalhe com linha do tempo, Notificações, Perfil e avaliação.
 7. **Consumo de API real** — clientes HTTP para APIs públicas, ViaCEP no formulário e IBGE nas telas de estado e município, com os 4 estados de tela.
-8. **Armazenamento local** — wrapper tipado do AsyncStorage, cache com TTL, tema persistido, rascunhos em SQLite, onboarding salvo no aparelho e aviso de offline.
+8. **Armazenamento local** — wrapper tipado do AsyncStorage, cache com TTL, tema persistido, rascunhos no aparelho, onboarding salvo e aviso de offline.
 9. **Atualização para o Expo SDK 58** — `npx expo install expo@^58.0.0 --fix` e ajustes para o React Native 0.88.
 10. **Acabamento** — identidade visual (ícone e splash próprios), Ajuda, Sobre, página 404, busca, puxar para atualizar e limpeza de dados no logout.
+11. **Backend com PostgreSQL** — API REST em `backend/` substituindo o mock: esquema com migrações, dados iniciais, autenticação JWT, testes de integração; o app passa a ler a URL da API do `.env.local`.
 
 O histórico detalhado de cada versão está no [CHANGELOG](CHANGELOG.md).
 
@@ -136,39 +167,65 @@ src/
       (tabs)/                # Home, Demandas, Nova, Notificações, Perfil
       demandas/[id].tsx      # detalhe da demanda
       localidades/           # estados e municípios [uf] (IBGE)
-      rascunhos/             # lista e detalhe [id] (SQLite)
+      rascunhos/             # lista e detalhe [id] (AsyncStorage)
       perfil/                # alterar senha, aparência
       ajuda/                 # FAQ e Sobre
   components/                # ui/, forms/, cards/, lists/, feedback/, loading/, timeline/
   features/                  # hooks por domínio (demandas, enderecos, localidades, notificacoes, rascunhos)
   services/                  # camada de serviço: api/ (clientes, erros, mock), enderecos/, localidades/, storage, cache
   stores/                    # Zustand: sessão, preferências, onboarding
-  lib/                       # SQLite, SecureStore, React Query, notificações, localização
+  lib/                       # SecureStore, React Query, notificações, localização, limpeza no logout
   schemas/, types/, hooks/, utils/, constants/, config/
+
+backend/
+  docker-compose.yml         # PostgreSQL 17 (porta 5433) + banco de testes
+  src/
+    migrations/              # esquema SQL versionado
+    rotas/                   # auth, demandas, notificacoes
+    auth/                    # JWT, middleware de login, permissões por papel
+    seed.ts                  # usuários e demandas de exemplo
+    scripts/                 # migrar, popular, avançar status
+  test/                      # testes de integração (node:test)
 ```
+
+**Endpoints da API**
+
+| Método | Rota | O que faz |
+|---|---|---|
+| POST | `/auth/login`, `/auth/register` | Entrar e cadastrar (devolve usuário e tokens) |
+| GET / PATCH | `/auth/me` | Ver e editar o perfil |
+| POST | `/auth/alterar-senha`, `/auth/forgot-password` | Trocar senha e pedir recuperação |
+| GET | `/demandas/minhas` | Demandas do usuário logado |
+| POST | `/demandas` | Criar demanda (gera protocolo, histórico e notificação) |
+| GET | `/demandas/:id` | Detalhe com linha do tempo e avaliação |
+| POST | `/demandas/:id/avaliacao` | Avaliar demanda concluída |
+| GET | `/notificacoes` | Notificações do usuário |
+| POST | `/notificacoes/:id/lida`, `/notificacoes/lidas` | Marcar uma ou todas como lidas |
 
 **Decisões principais**
 
 - **Nenhuma tela chama a API diretamente** — tela → hook em `features/` → serviço em `services/`.
 - **Erros sempre em português** — `services/api/errors.ts` converte falhas de rede, timeout e status HTTP em mensagens prontas para o cidadão.
 - **APIs públicas não recebem o token** do usuário (`services/api/public-client.ts`).
-- **Web com alternativas seguras** — no navegador não há SecureStore nem SQLite estável; a sessão fica só em memória e os rascunhos no AsyncStorage (arquivos `.web.ts`).
+- **Web com alternativa segura** — no navegador não há SecureStore; a sessão fica só em memória (`lib/secure-storage.web.ts`).
+- **Segurança no backend** — senhas com bcrypt, SQL sempre parametrizado, um usuário só enxerga as próprias demandas (as de outros respondem 404) e erros 500 nunca expõem detalhes técnicos.
 
 ## Modo de API
 
-Não existe ainda um backend do ÁGORA acessível; as demandas, notificações e a autenticação usam contratos simulados em `src/services/api/mock/` (marcados com `MOCK CONTRACT`). As APIs públicas (ViaCEP e IBGE) são **reais**. Para apontar para um backend de verdade, defina em `app.json`:
+O app escolhe de onde vêm os dados pelo `.env.local`:
 
-```json
-{ "expo": { "extra": { "apiMode": "http", "apiUrl": "https://api.seu-dominio.com" } } }
-```
+- `EXPO_PUBLIC_API_MODE=http` — usa o backend em `EXPO_PUBLIC_API_URL` (PostgreSQL).
+- `EXPO_PUBLIC_API_MODE=mock` — usa os dados simulados de `src/services/api/mock/`, sem precisar de backend.
 
-Nenhuma tela precisa mudar — só a configuração.
+As APIs públicas (ViaCEP e IBGE) são sempre reais. Nenhuma tela muda entre os modos — só a configuração.
 
 ## Limitações conhecidas
 
 - **Push remoto** exige development build (desde o SDK 53); o push local e o deep link funcionam no Expo Go.
 - **Mapa interativo** não está incluso: a localização é resolvida por GPS + endereço em texto.
-- **Telas de colaborador e gestor**: os papéis e permissões existem no domínio, mas a interface atual é a do cidadão.
+- **Telas de colaborador e gestor**: os papéis e permissões existem no domínio, mas a interface atual é a do cidadão (o atendimento é simulado pelo `npm run status`).
+- **Fotos**: o backend guarda o endereço local das fotos no aparelho; elas aparecem no celular que as tirou, mas o envio dos arquivos para o servidor não faz parte desta versão.
+- **Sessão**: o token vale 7 dias e não há renovação automática; depois disso o app pede login de novo.
 
 ## Licença
 
