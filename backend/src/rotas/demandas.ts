@@ -16,7 +16,7 @@ const CATEGORIAS = [
 
 /** Mesmas regras do formulário do app (src/schemas/demanda.ts). */
 const novaDemandaSchema = z.object({
-  categoria: z.enum(CATEGORIAS, { errorMap: () => ({ message: 'Selecione uma categoria.' }) }),
+  categoria: z.enum(CATEGORIAS, { error: 'Selecione uma categoria.' }),
   assunto: z.string().trim().min(5, 'Informe um assunto com pelo menos 5 caracteres.'),
   descricao: z.string().trim().min(20, 'Descreva a ocorrência com pelo menos 20 caracteres.'),
   localizacao: z.object({
