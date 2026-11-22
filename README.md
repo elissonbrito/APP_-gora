@@ -12,7 +12,7 @@ Registre, acompanhe e avalie as demandas da sua cidade — direto do celular.</p
   <img alt="React Native 0.88" src="https://img.shields.io/badge/React%20Native-0.88-61DAFB?logo=react" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript" />
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" />
-  <img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-1.2.0-7A2E3D" />
+  <img alt="Versão" src="https://img.shields.io/badge/vers%C3%A3o-1.3.0-7A2E3D" />
 </p>
 
 ---
@@ -25,7 +25,7 @@ Poste apagado, buraco na rua, lixo acumulado: o cidadão vê o problema, mas nã
 - **Acompanhar pelo protocolo** — linha do tempo de cada etapa, notificações e compartilhamento do protocolo.
 - **Avaliar o atendimento** — nota e comentário quando a demanda é concluída.
 - **Funcionar sem internet** — rascunhos guardados no aparelho, listas em cache e aviso de offline.
-- **Respeitar a privacidade** — sessão no cofre do aparelho (Keychain/Keystore) e dados do usuário apagados ao sair da conta.
+- **Respeitar a privacidade (LGPD)** — Termos de Uso e Política de Privacidade com aceite registrado, download dos próprios dados, exclusão da conta pelo app, sessão no cofre do aparelho e dados apagados ao sair.
 
 ## Telas
 
@@ -68,7 +68,19 @@ Poste apagado, buraco na rua, lixo acumulado: o cidadão vê o problema, mas nã
   </tr>
 </table>
 
-São **19 telas** navegáveis: boas-vindas, login, cadastro, recuperar senha, Home, Demandas, Nova demanda, Notificações, Perfil, detalhe da demanda, alterar senha, Aparência, escolha de estado, escolha de município, Rascunhos, detalhe do rascunho, Ajuda, Sobre e página 404.
+### Privacidade e LGPD
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/25-cadastro-lgpd.png" width="160" /><br/><sub>Cadastro com aceite e senha forte</sub></td>
+    <td align="center"><img src="docs/screenshots/26-termos-de-uso.png" width="160" /><br/><sub>Termos de Uso</sub></td>
+    <td align="center"><img src="docs/screenshots/27-politica-de-privacidade.png" width="160" /><br/><sub>Política de Privacidade</sub></td>
+    <td align="center"><img src="docs/screenshots/28-perfil-privacidade.png" width="160" /><br/><sub>Privacidade e dados</sub></td>
+    <td align="center"><img src="docs/screenshots/29-excluir-conta.png" width="160" /><br/><sub>Excluir minha conta</sub></td>
+  </tr>
+</table>
+
+São **22 telas** navegáveis: boas-vindas, login, cadastro, recuperar senha, Home, Demandas, Nova demanda, Notificações, Perfil, detalhe da demanda, alterar senha, Aparência, escolha de estado, escolha de município, Rascunhos, detalhe do rascunho, Ajuda, Sobre, Termos de Uso, Política de Privacidade, excluir conta e página 404.
 
 ## O que foi aplicado de cada conteúdo da disciplina
 
@@ -79,6 +91,7 @@ São **19 telas** navegáveis: boas-vindas, login, cadastro, recuperar senha, Ho
 | **Navegação com Expo Router** (Aula 8) | Rotas por arquivo em `src/app`, grupos `(app)` e `(tabs)`, rotas dinâmicas `[id]` e `[uf]`, Stack + Tabs, `router.push`/`replace`/`dismissTo`, rotas protegidas com `Stack.Protected` e tela `+not-found`. |
 | **Consumo de API** (Aula 9) | APIs públicas reais: **ViaCEP** (endereço pelo CEP) e **IBGE Localidades** (estados e municípios), com camada de serviço, tratamento de erros em português, os 4 estados de tela (carregando, erro, vazio, sucesso), `FlatList` e puxar para atualizar. |
 | **Armazenamento local** (Aula 10) | **SecureStore** para a sessão (token JWT); **AsyncStorage** para tema, cidade, onboarding, rascunhos e cache com validade (TTL); NetInfo para o aviso de offline; limpeza dos dados do usuário no logout. |
+| **Segurança e LGPD** | Senha forte, limite de tentativas, termos com aceite registrado, exportação dos dados e exclusão da conta (art. 18 da LGPD) — veja [Segurança e privacidade](#segurança-e-privacidade). |
 | **Backend próprio** | API REST em Node.js + Express com **PostgreSQL** (pasta `backend/`): usuários com senha criptografada (bcrypt), login com JWT, demandas, linha do tempo, avaliações e notificações. |
 
 ## Como executar
@@ -89,7 +102,7 @@ Pré-requisitos: **Node.js 22.18+ ou 24+**, npm, **Docker** (para o PostgreSQL) 
 
 ```bash
 cd backend
-cp .env.example .env     # na primeira vez; troque o JWT_SECRET
+cp .env.example .env     # na primeira vez; gere um JWT_SECRET forte (a API não sobe sem ele)
 npm install
 npm run db:up            # sobe o PostgreSQL no Docker (porta 5433)
 npm run db:seed          # cria as tabelas e os dados de exemplo
@@ -133,10 +146,10 @@ npm run status -- AG-2026-000124 "Equipe enviada ao local."
 ### Testes e qualidade
 
 ```bash
-npm test                     # app: 80 testes (Jest + Testing Library)
+npm test                     # app: 88 testes (Jest + Testing Library)
 npm run lint                 # ESLint (config do Expo)
 npx tsc --noEmit             # TypeScript em modo strict
-cd backend && npm test       # API: 10 testes de integração no banco agora_test
+cd backend && npm test       # API: 19 testes de integração e de segurança no banco agora_test
 ```
 
 ## Como o projeto foi criado do zero
@@ -201,6 +214,8 @@ backend/
 | POST | `/demandas/:id/avaliacao` | Avaliar demanda concluída |
 | GET | `/notificacoes` | Notificações do usuário |
 | POST | `/notificacoes/:id/lida`, `/notificacoes/lidas` | Marcar uma ou todas como lidas |
+| GET | `/conta/dados` | Exportar todos os dados do titular em JSON (LGPD) |
+| DELETE | `/conta` | Excluir a conta, confirmando a senha (LGPD) |
 
 **Decisões principais**
 
@@ -209,6 +224,26 @@ backend/
 - **APIs públicas não recebem o token** do usuário (`services/api/public-client.ts`).
 - **Web com alternativa segura** — no navegador não há SecureStore; a sessão fica só em memória (`lib/secure-storage.web.ts`).
 - **Segurança no backend** — senhas com bcrypt, SQL sempre parametrizado, um usuário só enxerga as próprias demandas (as de outros respondem 404) e erros 500 nunca expõem detalhes técnicos.
+
+## Segurança e privacidade
+
+O app passou por uma revisão de segurança baseada no OWASP (Top 10 e API Security), com ataques simulados automatizados em `backend/test/seguranca.teste.ts`.
+
+**Proteções**
+
+- **Senhas** com bcrypt; política de senha forte (8+ caracteres, letras e números, sem senhas comuns) no app e na API.
+- **Login** com limite de tentativas (5 erros por conta e 20 por IP a cada 15 min, resposta 429) e tempo de resposta igual para e-mail existente ou não.
+- **JWT** com algoritmo fixo (HS256) e segredo forte obrigatório; sessão no SecureStore (Keychain/Keystore).
+- **Autorização** no servidor: o usuário vem sempre do token, e cada um só acessa as próprias demandas, notificações e dados (recurso alheio responde 404).
+- **Entradas** validadas com zod em todas as rotas, SQL sempre parametrizado e limite de 100 KB por requisição (413).
+- **Cabeçalhos de segurança** (`nosniff`, `DENY`, CSP, `no-store`), CORS restrito às origens configuradas e erros sem detalhes técnicos.
+- **Banco** acessível só pelo próprio computador (127.0.0.1) e logs sem dados pessoais.
+
+**LGPD (Lei 13.709/2018)**
+
+- Termos de Uso e Política de Privacidade no app, com aceite obrigatório no cadastro e registro da versão e da data do aceite.
+- Direitos do titular (art. 18) pelo próprio app, em Perfil › Privacidade e dados: acesso e portabilidade ("Baixar meus dados", em JSON), correção (Meus dados) e eliminação ("Excluir minha conta", confirmada com a senha).
+- Minimização: o app não coleta CPF, documentos ou contatos; ViaCEP e IBGE recebem só o CEP e a sigla do estado.
 
 ## Modo de API
 
@@ -225,7 +260,9 @@ As APIs públicas (ViaCEP e IBGE) são sempre reais. Nenhuma tela muda entre os 
 - **Mapa interativo** não está incluso: a localização é resolvida por GPS + endereço em texto.
 - **Telas de colaborador e gestor**: os papéis e permissões existem no domínio, mas a interface atual é a do cidadão (o atendimento é simulado pelo `npm run status`).
 - **Fotos**: o backend guarda o endereço local das fotos no aparelho; elas aparecem no celular que as tirou, mas o envio dos arquivos para o servidor não faz parte desta versão.
-- **Sessão**: o token vale 7 dias e não há renovação automática; depois disso o app pede login de novo.
+- **Sessão**: o token vale 7 dias e não há renovação nem revogação no servidor; sair da conta apaga o token do aparelho.
+- **Produção**: o ambiente local usa HTTP na rede Wi-Fi. Para publicar, a API precisa de **HTTPS**, de um usuário de banco com privilégios mínimos e de um limitador compartilhado (Redis) se houver mais de uma instância.
+- **Documentos legais**: os textos seguem a LGPD, mas o órgão que operar o ÁGORA deve completar os dados do controlador e do encarregado (DPO) e validá-los com sua assessoria jurídica.
 
 ## Licença
 
