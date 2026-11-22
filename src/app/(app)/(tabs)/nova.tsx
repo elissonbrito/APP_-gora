@@ -123,7 +123,7 @@ export default function NovaDemandaScreen() {
           <ThemedText type="default" themeColor="textSecondary">
             Você pode acompanhar o andamento pelo protocolo:
           </ThemedText>
-          <ThemedText type="title" style={styles.protocolo}>
+          <ThemedText type="title" style={styles.protocolo} numberOfLines={1} selectable>
             {protocolo}
           </ThemedText>
           <Button
@@ -297,7 +297,11 @@ const styles = StyleSheet.create({
   aviso: {
     textAlign: 'center',
   },
+  // Protocolo numa linha só: é o número que o cidadão anota e compartilha.
   protocolo: {
     marginVertical: Spacing.three,
+    fontSize: 34,
+    lineHeight: 40,
+    letterSpacing: 0.5,
   },
 });
