@@ -59,6 +59,12 @@ Poste apagado, buraco na rua, lixo acumulado: o cidadão vê o problema, mas nã
     <td align="center"><img src="docs/screenshots/04-recuperar-senha.png" width="200" /><br/><sub>Recuperar senha</sub></td>
     <td align="center"><img src="docs/screenshots/20-pagina-404.png" width="200" /><br/><sub>Página 404</sub></td>
   </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/23-protocolo-gerado.png" width="200" /><br/><sub>Protocolo gerado</sub></td>
+    <td align="center"><img src="docs/screenshots/22-avaliacao.png" width="200" /><br/><sub>Avaliação do atendimento</sub></td>
+    <td align="center"><img src="docs/screenshots/24-perfil-preferencias.png" width="200" /><br/><sub>Cidade e tema no Perfil</sub></td>
+    <td align="center"><img src="docs/screenshots/21-alterar-senha.png" width="200" /><br/><sub>Alterar senha</sub></td>
+  </tr>
 </table>
 
 São **19 telas** navegáveis: boas-vindas, login, cadastro, recuperar senha, Home, Demandas, Nova demanda, Notificações, Perfil, detalhe da demanda, alterar senha, Aparência, escolha de estado, escolha de município, Rascunhos, detalhe do rascunho, Ajuda, Sobre e página 404.
@@ -98,7 +104,7 @@ O cadastro em `/cadastro` também funciona e cria um cidadão em memória.
 ### Testes e qualidade
 
 ```bash
-npm test         # 77 testes (Jest + Testing Library)
+npm test         # 75 testes (Jest + Testing Library)
 npm run lint     # ESLint (config do Expo)
 npx tsc --noEmit # TypeScript em modo strict
 ```
