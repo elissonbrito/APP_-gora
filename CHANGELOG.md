@@ -3,6 +3,17 @@
 Todas as mudanças relevantes do app ÁGORA são registradas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Corrigido
+- Quando o servidor não respondia, o app dizia "Sem conexão com a internet" mesmo com o celular conectado. Agora diferencia: sem internet, ou servidor do ÁGORA fora do ar (em desenvolvimento, mostra o endereço da API tentado).
+
+### Adicionado
+- Atalhos `npm run api` e `npm run api:db` na raiz para subir o backend e o banco sem entrar na pasta `backend/`.
+
+### Documentação
+- Print da tela Sobre atualizado com a versão 1.3.0 e a seção de Privacidade (LGPD).
+
 ## [1.3.0] — 2026-11-22
 
 Revisão final de segurança (OWASP) e adequação à LGPD.
