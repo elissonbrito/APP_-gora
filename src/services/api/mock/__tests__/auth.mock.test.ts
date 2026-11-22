@@ -3,7 +3,6 @@ import {
   mockAtualizarPerfil,
   mockFetchProfile,
   mockLogin,
-  mockRefreshSession,
   mockRegister,
 } from '@/services/api/mock/auth.mock';
 import { AppError } from '@/services/api/errors';
@@ -48,21 +47,11 @@ describe('mockRegister', () => {
   });
 });
 
-describe('mockFetchProfile / mockRefreshSession', () => {
+describe('mockFetchProfile', () => {
   test('retorna o perfil correspondente ao token de acesso', async () => {
     const { tokens } = await mockLogin({ email: 'gestor@agora.dev', senha: '123456' });
     const perfil = await mockFetchProfile(tokens.accessToken);
     expect(perfil.role).toBe('gestor');
-  });
-
-  test('renova a sessão a partir de um refresh token válido', async () => {
-    const { tokens } = await mockLogin({ email: 'colaborador@agora.dev', senha: '123456' });
-    const novosTokens = await mockRefreshSession(tokens.refreshToken);
-    expect(novosTokens.accessToken).toBeTruthy();
-  });
-
-  test('rejeita refresh token inválido', async () => {
-    await expect(mockRefreshSession('token-invalido')).rejects.toMatchObject({ kind: 'auth' });
   });
 });
 

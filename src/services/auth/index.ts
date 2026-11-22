@@ -5,7 +5,6 @@ import {
   mockAtualizarPerfil,
   mockFetchProfile,
   mockLogin,
-  mockRefreshSession,
   mockRegister,
   mockRequestPasswordReset,
 } from '@/services/api/mock/auth.mock';
@@ -23,8 +22,7 @@ type AuthResult = { user: User; tokens: AuthTokens };
 /**
  * Camada de serviço de autenticação. Telas e hooks só devem falar com estas
  * funções — nunca com axios ou com o mock diretamente. Quando env.apiMode
- * for 'http', os endpoints abaixo (/auth/login, /auth/register, /auth/refresh,
- * /auth/me) são placeholders a validar contra a API real do ÁGORA (REGRA 1/2).
+ * for 'http', os endpoints abaixo (/auth/login, /auth/register, /auth/me) são placeholders a validar contra a API real do ÁGORA (REGRA 1/2).
  */
 export async function login(credentials: LoginCredentials): Promise<AuthResult> {
   if (env.apiMode === 'mock') return mockLogin(credentials);
@@ -35,12 +33,6 @@ export async function login(credentials: LoginCredentials): Promise<AuthResult> 
 export async function register(payload: RegisterPayload): Promise<AuthResult> {
   if (env.apiMode === 'mock') return mockRegister(payload);
   const { data } = await apiClient.post<AuthResult>('/auth/register', payload);
-  return data;
-}
-
-export async function refreshSession(refreshToken: string): Promise<AuthTokens> {
-  if (env.apiMode === 'mock') return mockRefreshSession(refreshToken);
-  const { data } = await apiClient.post<AuthTokens>('/auth/refresh', { refreshToken });
   return data;
 }
 

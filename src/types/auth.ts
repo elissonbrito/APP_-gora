@@ -40,11 +40,6 @@ export type RegisterPayload = {
   senha: string;
 };
 
-export type AuthSession = {
-  user: User;
-  tokens: AuthTokens;
-};
-
 export type AtualizarPerfilPayload = {
   nome: string;
   telefone?: string;

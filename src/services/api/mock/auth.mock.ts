@@ -87,15 +87,6 @@ export async function mockRegister(
   return mockDelay({ user, tokens: issueTokens(user.id) });
 }
 
-export async function mockRefreshSession(refreshToken: string): Promise<AuthTokens> {
-  const [, userId] = refreshToken.split('.');
-  const record = mockUsers.find((candidate) => candidate.id === userId);
-  if (!refreshToken.startsWith('mock-refresh.') || !record) {
-    throw new AppError('auth');
-  }
-  return mockDelay(issueTokens(record.id));
-}
-
 export async function mockFetchProfile(accessToken: string): Promise<User> {
   const [, userId] = accessToken.split('.');
   const record = mockUsers.find((candidate) => candidate.id === userId);
