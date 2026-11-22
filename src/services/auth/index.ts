@@ -37,13 +37,15 @@ export async function register(payload: RegisterPayload): Promise<AuthResult> {
 }
 
 /**
- * accessToken só é usado no modo mock (não há interceptor de fato injetando
- * header). No modo http o interceptor de services/api/interceptors.ts cuida
- * disso e o parâmetro é ignorado.
+ * Usado ao reabrir o app (restoreSession): nesse momento a store ainda não tem
+ * o token em memória, então o interceptor não o injetaria — por isso o token
+ * salvo no SecureStore vai explicitamente no cabeçalho.
  */
 export async function fetchProfile(accessToken: string): Promise<User> {
   if (env.apiMode === 'mock') return mockFetchProfile(accessToken);
-  const { data } = await apiClient.get<User>('/auth/me');
+  const { data } = await apiClient.get<User>('/auth/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
   return data;
 }
 
